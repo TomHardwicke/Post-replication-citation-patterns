@@ -1,5 +1,5 @@
 ---
-title: "Post-replication citation patterns in psychological science: Preliminary analysis"
+title: "PRCP Preliminary Analysis"
 output: html_document
 ---
 
@@ -56,6 +56,8 @@ for(i in seq(1,5)){ # loop through cases
 }
 ```
 
+# Post-replication citation patterns in psychological science: Preliminary analysis
+
 Hi all,
 
 We've now completed all planned data collection and coding for this project. This report contains a preliminary analysis of the data conducted by Tom & Sophia. The study protocol(s) can be found here:
@@ -92,7 +94,7 @@ ggarrange(citationCurve('sripada', standardized = F, plotReference = F),
 
 ## Standardized citations with reference class
 
-Now we'll plot standardized citation curves and include citations to the set of reference articles (the dashed grey line). In the graphs below, the annual citation counts for both the target article and reference class are standardized against the calendar year with the highest citation count for the target article (i.e., citations received in that year are set at the standardized value of 100). As defined in the protocol, the reference class in each case is all of the articles published in the same year and in the same journal as the target article. For example, for Baumeister et al. (1998), the reference class is all articles published in 1998 in the Journal of Personality and Social Psychology.
+Now we'll plot standardized citation curves and include citations to the set of reference articles. In the graphs below, the annual citation counts for both the target article and reference class are standardized against the calendar year with the highest citation count for the target article (i.e., citations received in that year are set at the standardized value of 100). As defined in the protocol, the reference class in each case is all of the articles published in the same year and in the same journal as the target article. For example, for Baumeister et al. (1998), the reference class is all articles published in 1998 in the Journal of Personality and Social Psychology.
 
 ```{r fig.height = 6, fig.width = 8}
 ggarrange(citationCurve('strack', standardized = T, plotReference = T),
@@ -127,9 +129,9 @@ Before moving on, there are a few things to note or questions I want to raise:
 
 We conducted a qualitative assessment of citing articles within a pre-defined "assessment period". The assessment period included the year prior to and all years after publication of the replication. We assessed all citing articles in the assessment period except for in the Baumeister case - due to a very large number of citing articles we only examined a random sample of 40% of the citing articles from the assessment period, specifically 2015 (n = 76) and 2017 to April 2019 (n = 177). In all cases, the assessment period does not include the year in which the replication was published. This is because articles may already be in the publication pipeline for which the authors have no knowledge of the results of the contradictory replication.
 
-Across all cases, `r d_contentAnalysis %>% count(excluded) %>% filter(excluded == T) %>% pull(n)` citing articles had to be excluded because they could not be accessed (n = `r d_contentAnalysis %>% count(exclusionReason) %>% filter(exclusionReason == "No access") %>% pull(n)`), were non-English language (n = `r d_contentAnalysis %>% count(exclusionReason) %>% filter(exclusionReason == "Non-English language") %>% pull(n)`), or because the target article was cited in the references but not in the actual text (n = `r d_contentAnalysis %>% count(exclusionReason) %>% filter(exclusionReason == "Cited in references but not in text") %>% pull(n)`). Excluded articles are represented on the graphs below in light grey.
+Across all cases, `r d_contentAnalysis %>% count(excluded) %>% filter(excluded == T) %>% pull(n)` citing articles had to be excluded because they could not be accessed (n = `r d_contentAnalysis %>% count(exclusionReason) %>% filter(exclusionReason == "No access") %>% pull(n)`), non-English language (n = `r d_contentAnalysis %>% count(exclusionReason) %>% filter(exclusionReason == "Non-English language") %>% pull(n)`), or because the target article was cited in the references but not in the actual text (n = `r d_contentAnalysis %>% count(exclusionReason) %>% filter(exclusionReason == "Cited in references but not in text") %>% pull(n)`). Excluded articles are represented on the graphs below in light grey.
 
-## Claim correction vs. claim perpetuation
+## Claim correction vs. claim perpetuation.
 
 One goal of the study was to see if we would observe a post-replication pattern more consistent with "claim correction" or "claim perpetuation".
 
@@ -319,18 +321,16 @@ rbind(
   group_by(case) %>%
   summarise(targetCitations = sum(citesTarget,na.rm=T), 
             replicationCitations = sum(citesRep_yes,na.rm=T)) %>%
-  mutate(`replicationCitations (%)` = round((replicationCitations/targetCitations)*100,0)) %>%
+  mutate(replicationCitations_percent = round((replicationCitations/targetCitations)*100,0)) %>%
   kable(caption = 'Citations to replication study by articles citing target study in post-replication years') %>%
   kable_styling(full_width = F)
 ```
 
 There seems to be evidence of citation bias (citing the target article but not the replication) in all cases, though the effect size smaller in the Sripada case (probably because this study is probably only well known because of its connection to the Baumeister study - recall that it was used as a methodological proxy for that more influential study in the replication attempt).
 
-## Principled defense vs. hollow defense
+## Principled defense vs. hollow defense.
 
 Proponents of the original claim may seek to make the case that the contradictory replication actually does not undermine their position. In this case, one might expect counter-arguments that defend the original claim to be presented in articles that cite the replication study and favourably cite the original study.
-
-Here's the data in tabular format:
 
 ```{r}
 rbind(
@@ -344,18 +344,9 @@ rbind(
   group_by(case) %>%
   summarise(counterargs_yes = sum(counterargs_yes,na.rm=T),
             counterargs_no = sum(counterargs_no,na.rm=T)) %>%
-  mutate(
-    `Replication cited` = counterargs_yes+counterargs_no,
-    counterargs_percent = round(
-    (counterargs_yes/(`Replication cited`))*100,
+  mutate(counterargs_percent = round(
+    (counterargs_yes/(counterargs_yes+counterargs_no))*100,
     0)) %>%
-  select(case,
-         `Replication cited`,
-         `Counter arguments used` = counterargs_yes,
-         -counterargs_no,
-         `Counter arguments used (%)` = counterargs_percent) %>%
-  kable(caption = 'Use of counter arguments when target study cited favourably and replication study cited') %>%
+  kable(caption = 'Use of counter arguments when replication study cited') %>%
   kable_styling(full_width = F)
 ```
-
-The numbers are quite small here because we are looking only at articles that cited the target study and also cited the replication study favourably (note we actually coded for counter arguments whenever the replication study was cited, but this doesn't increase the counts a great deal as is less straightforward to interpret). It looks like there are examples of 'principled defense' (citing the target study favourably and providing counter arguments against the replication) and 'hollow defense' (citing the target study favourably but providing no counter arguments against the replication), with a tendency towards the latter.
