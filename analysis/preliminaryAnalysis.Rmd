@@ -324,7 +324,7 @@ rbind(
   kable_styling(full_width = F)
 ```
 
-There seems to be evidence of citation bias (citing the target article but not the replication) in all cases, though the effect size smaller in the Sripada case (probably because this study is probably only well known because of its connection to the Baumeister study - recall that it was used as a methodological proxy for that more influential study in the replication attempt).
+There seems to be evidence of citation bias (citing the target article but not the replication) in all cases, though the effect is smaller in the Sripada case (probably because this study is probably only well known because of its connection to the Baumeister study - recall that it was used as a methodological proxy for that more influential study in the replication attempt).
 
 ## Principled defense vs. hollow defense
 
