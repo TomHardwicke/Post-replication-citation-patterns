@@ -67,7 +67,7 @@ We've now completed all planned data collection and coding for this project. Thi
 
 ## Raw citations
 
-Firstly, we'll plot raw citation curves for the five cases to get a flavour of what we are working with. The x-axis starts in the year the target study was published. The black arrow indicates the publication date of the contradictory replication study. The black line represents the raw annual citation count to the target article. Note that the citation data was acquired on April 26th, 2019, which partly contributes to the fall in citations in 2019 in all cases.
+Firstly, we'll plot raw citation curves for the five cases to get a flavour of what we are working with. The x-axis starts in the year the target study was published. The black arrow indicates the publication date of the contradictory replication study. The black line represents the raw annual citation count to the target article. Note that the citation data was acquired from the WOS database on April 26th, 2019, which partly contributes to the fall in citations in 2019 in all cases.
 
 Throughout this report, we've made larger plots for the Baumeister and Strack cases because their citation counts are substantially larger than the other cases (Sripada, Carter, Caruso).
 
