@@ -45,3 +45,8 @@ vignettes/*.pdf
 # additional files
 PROJ_citationReplication.Rproj
 .DS_Store
+.DS_Store
+.DS_Store
+data/.DS_Store
+data/raw/.DS_Store
+analysis/.DS_Store
