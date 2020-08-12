@@ -33,6 +33,8 @@ for(i in caseNames){ # loop through case names
 }
 
 ### Apply munging
+d_reference <- d_reference %>%
+  mutate(pubYear = as.numeric(year))
 
 ### Save file
 save(d_reference, file = here('data','processed','/d_reference.R'))
