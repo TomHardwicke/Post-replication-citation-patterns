@@ -80,7 +80,6 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
   
   # for reference class
   referenceDataSummarized <- referenceData %>%
-    select(-meanCitations) %>% # remove mean citations variable
     rename(citesRef = totalCitations) %>% # rename citations to reference class
     mutate(citesRef_std = citesRef*standardizationFactorRef) # add std citation counts
   
