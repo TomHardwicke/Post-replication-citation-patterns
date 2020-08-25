@@ -58,9 +58,11 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
     rename('citesTarget' = n)
   
   # identify year with highest citations in citation data to use as standard year
-  standardYear <- citationDataSummarized %>% 
-    filter(citesTarget == max(citesTarget)) %>% 
+  ## NB !!! No longer using this. Now using replication year as standardYear
+  standardYear <- citationDataSummarized %>%
+    filter(citesTarget == max(citesTarget)) %>%
     pull(pubYear)
+  #standardYear <- replicationYear
   
   # extract the number of citations in the standard year for the reference data
   standardCitationsRef <- referenceData %>% 
