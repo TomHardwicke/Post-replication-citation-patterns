@@ -1,0 +1,27 @@
+firstCoder,secondCoder,doi,authors,pubYear,excluded,exclusionReason,articleType,citesReplication,citationClassificationOriginal,citationClassificationAgreed,counterArguments,UT
+TH,DS,10.1177/1088868318762183,"Friese, M; Loschelder, DD; Gieseler, K; Frankenbach, J; Inzlicht, M",2019,FALSE,"NA",No empirical data,TRUE,unfavourable,unfavourable,TRUE,WOS:000463615200001
+TH,DS,10.1371/journal.pone.0213026,"Radel, R; Gruet, M; Barzykowski, K",2019,FALSE,"NA",Empirical data - laboratory study,TRUE,equivocal,unfavourable,TRUE,WOS:000460638800033
+TH,DS,10.1080/01973533.2018.1530671,"Singh, RK; Goritz, AS",2019,FALSE,"NA",Empirical data - laboratory study,TRUE,equivocal,equivocal,TRUE,WOS:000461576700001
+TH,DS,10.1037/npe0000082,"Balafoutas, L; Kerschbamer, R; Oexl, R",2018,FALSE,"NA",Empirical data - laboratory study,TRUE,unfavourable,unfavourable,TRUE,WOS:000442587700003
+TH,DS,10.1098/rsos.180390,"Vadillo, MA; Gold, N; Osman, M",2018,FALSE,"NA",Empirical data - commentary including analysis,TRUE,unfavourable,unfavourable,TRUE,WOS:000443443000053
+TH,DS,10.1371/journal.pone.0199554,"Wolff, W; Baumann, L; Englert, C",2018,FALSE,"NA",Empirical data - laboratory study,TRUE,equivocal,equivocal,TRUE,WOS:000436088700023
+TH,DS,10.1007/s11572-017-9423-z,"Koi, P; Uusitalo, S; Tuominen, J",2018,FALSE,"NA",No empirical data,FALSE,favourable,favourable,NA,WOS:000442987000002
+TH,DS,10.1016/j.socec.2018.04.009,"Achtziger, A; Alos-Ferrer, C; Wagner, AK",2018,FALSE,"NA",Empirical data - laboratory study,TRUE,unfavourable,unfavourable,TRUE,WOS:000432773100018
+TH,DS,10.3389/fpsyg.2018.00711,"Myers, L; Downie, S; Taylor, G; Marrington, J; Tehan, G; Ireland, MJ",2018,FALSE,"NA",Empirical data - laboratory study,TRUE,equivocal,equivocal,TRUE,WOS:000432576700002
+TH,DS,10.1017/S0140525X17001972,"Zwaan, RA; Etz, A; Lucas, RE; Donnellan, MB",2018,FALSE,"NA",No empirical data,TRUE,unfavourable,unfavourable,FALSE,WOS:000458790700035
+TH,DS,10.1146/annurev-psych-122216-011845,"Shrout, Patrick E.; Rodgers, Joseph L.",2018,FALSE,"NA",No empirical data,TRUE,equivocal,equivocal,FALSE,WOS:000424143700021
+TH,DS,10.1037/pspi0000099,"Savani, Krishna; Job, Veronika",2017,FALSE,"NA",Empirical data - laboratory study,TRUE,equivocal,equivocal,FALSE,WOS:000412445100005
+TH,DS,10.1371/journal.pone.0174331,"Emmerling, Franziska; Martijn, Carolien; Alberts, Hugo J. E. M.; Thomson, Alix C.; David, Bastian; Kessler, Daniel; Schuhmann, Teresa; Sack, Alexander T.",2017,FALSE,"NA",Empirical data - laboratory study,TRUE,favourable,favourable,FALSE,WOS:000399175000013
+TH,DS,10.3389/fpsyg.2017.00273,"Drummond, Aaron; Philipp, Michael C.",2017,FALSE,"NA",No empirical data,TRUE,unclassifiable,unclassifiable,FALSE,WOS:000394804500001
+TH,DS,10.1037/npe0000047,"Alos-Ferrer, C; Hugelschafer, S; Li, JH",2015,FALSE,"NA",Empirical data - laboratory study,FALSE,favourable,favourable,NA,WOS:000365705900001
+TH,DS,10.1111/spc3.12200,"Inzlicht, M; Berkman, E",2015,FALSE,"NA",No empirical data,FALSE,favourable,favourable,NA,WOS:000214703800001
+TH,DS,10.3389/fpsyg.2015.01425,"Englert, C; Wolff, W",2015,FALSE,"NA",No empirical data,FALSE,favourable,favourable,NA,WOS:000362853300001
+TH,DS,10.1002/hbm.22833,"Lebedev, AV; Lovden, M; Rosenthal, G; Feilding, A; Nutt, DJ; Carhart-Harris, RL",2015,FALSE,"NA",Empirical data - laboratory study,FALSE,favourable,favourable,NA,WOS:000357949900021
+TH,DS,10.1080/00221309.2015.1063475,"Frane, A",2015,FALSE,"NA",Empirical data - field study,FALSE,unclassifiable,unclassifiable,NA,WOS:000359949600005
+TH,DS,NA,"Dienstbier, RA",2015,TRUE,No access,NA,NA,NA,NA,NA,WOS:000383890800023
+SC,TH,10.1016/j.joep.2018.11.001,"Alos-Ferrer, Carlos; Ritschel, Alexander; Garcia-Segarra, Jaume; Achtziger, Anja",2019,FALSE,NA,Empirical data - laboratory study,TRUE,favourable,favourable,TRUE,WOS:000503325400003
+SC,TH,10.1027/1864-9335/a000375,"Vadillo, Miguel A.",2019,FALSE,NA,Data synthesis,TRUE,favourable,equivocal,TRUE,WOS:000495020100002
+SC,TH,10.1027/1864-9335/a000365,"Wenzel, Mario; Lind, Marina; Rowland, Zarah; Zahn, Daniala; Kubiak, Thomas",2019,FALSE,NA,Empirical data - laboratory study,TRUE,favourable,favourable,TRUE,WOS:000495020100003
+SC,TH,10.1027/1864-9335/a000393,"Wimmer, Marina C.; Dome, Lenard; Hancock, Peter J. B.; Wennekers, Thomas",2019,FALSE,NA,Empirical data - laboratory study,TRUE,favourable,favourable,TRUE,WOS:000495020100007
+SC,TH,10.1002/per.2208,"Wenzel, Mario; Rowland, Zarah; Zahn, Daniela; Kubiak, Thomas",2019,FALSE,NA,Empirical data - laboratory study,TRUE,favourable,favourable,TRUE,WOS:000478650900003
+SC,TH,"NA","Christensen, G.; Freese, J.; Miguel, E.",2019,TRUE,No access,NA,NA,NA,NA,NA,WOS:000518823400013

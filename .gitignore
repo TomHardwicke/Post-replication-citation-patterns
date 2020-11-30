@@ -3,6 +3,8 @@ manuscript/
 researchFiles/
 protocol/
 figs/
+data/OLD/
+data/raw/
 
 # History files
 .Rhistory
@@ -52,3 +54,4 @@ data/raw/.DS_Store
 analysis/.DS_Store
 analysis/preliminaryAnalysis_PRCP_20July2020.docx
 analysis/~$eliminaryAnalysis.docx
+analysis/rawToPrimary.R

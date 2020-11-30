@@ -142,7 +142,7 @@ citationCurve <- function(
   
   # set the top of the y-axis and increments depending on case (some have many citations, some have few)
   if(standardized == T){ # if standardizing then all cases can use same y axis
-    yMax <- 100
+    yMax <- 125
     yInc <- 25
   }else if(thisCase == 'baumeister'){
     yMax <- 250
@@ -158,24 +158,24 @@ citationCurve <- function(
   # set the x-axis limits and increments depending on case (length of citation histories varies)
   if(thisCase == 'baumeister'){ # if standardizing then all cases can use same y axis
     xmin <- 1998
-    xmax <- 2020
-    xInc <- 5
+    xmax <- 2019
+    xInc <- 1
   }else if(thisCase == 'strack'){
     xmin <- 1988
-    xmax <- 2020
-    xInc <- 5
+    xmax <- 2019
+    xInc <- 1
   }else if(thisCase == 'sripada'){
     xmin <- 2014
-    xmax <- 2020
-    xInc <- 2
+    xmax <- 2019
+    xInc <- 1
   }else if(thisCase == 'carter'){
     xmin <- 2011
     xmax <- 2019
-    xInc <- 2
+    xInc <- 1
   }else if(thisCase == 'caruso'){
     xmin <- 2013
     xmax <- 2019
-    xInc <- 2
+    xInc <- 1
   }
   
   # re-organise the data frame for plotting
@@ -238,11 +238,13 @@ citationCurve <- function(
     basePlot <- basePlot +
       scale_x_continuous(
         breaks = seq(replicationYear-3, max(d$pubYear), 1),
-        limits = c(replicationYear-3,max(d$pubYear))) # adjust x axis
+        limits = c(replicationYear-3,max(d$pubYear)),
+        expand = c(0,0.5)) # adjust x axis
   }else{
     basePlot <- basePlot +
       scale_x_continuous(
-        breaks = seq(xmin, xmax, xInc)) # adjust x axis
+        breaks = seq(xmin, xmax, xInc),
+        expand = c(0,0.5)) # adjust x axis
   }
   
   ## the following is to account for the absence of qualitative data in the replication year
@@ -271,7 +273,7 @@ citationCurve <- function(
       linetype = 'dashed', 
       size = .5)
   }
-
+  
   if(areaPlot == 'classification'){
     basePlot <- basePlot +
       geom_area(
@@ -298,8 +300,16 @@ citationCurve <- function(
               'Equivocal',
               'Unfavourable')) %>%
           mutate(var = fct_drop(var))) +
-      scale_fill_manual(name='', values = p1) +
       scale_colour_manual(name = '', values = p1, guide = F)
+    
+    # include legend for top row plots only
+    if(thisCase %in% c('baumeister','strack')){ # if standardizing then all cases can use same y axis
+      basePlot <- basePlot +
+        scale_fill_manual(name = '', values = p1)
+    }else{
+      basePlot <- basePlot +
+        scale_fill_manual(name = '', values = p1, guide=F)
+    }
   }
   
   if(areaPlot == 'citesReplication'){
@@ -314,8 +324,7 @@ citationCurve <- function(
               'Excluded',
               'Cites replication',
               'Does not cite replication')) %>%
-          mutate(var = fct_drop(var))) +
-      scale_fill_manual(name = '', values = p2)
+          mutate(var = fct_drop(var)))
   }
   
   if(standardized == T){
@@ -343,17 +352,17 @@ citationCurve <- function(
     annotate( # plot arrow marking replication year
       'segment',
       x = replicationYear, 
-      y = yMax + yMax/80,
+      y = 125,
       xend = replicationYear,
-      yend = yMax/80,
-      size = .5,
-      arrow = arrow(length = unit(0.25,"cm"), type="closed")) +
-    theme_apa() + # apply APA theme
+      yend = 3,
+      size = 1,
+      arrow = arrow(length = unit(.5,"cm"), type="closed")) +
+    theme_apa(base_size = 20) + # apply APA theme
     theme( # other theme adjustments
       axis.line = element_line(),
       axis.title.x = element_blank(),
       axis.title.y = element_blank(),
-      legend.position = 'bottom') +
+      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
     ggtitle(str_to_upper(thisCase)) # add title
   
   return(basePlot)

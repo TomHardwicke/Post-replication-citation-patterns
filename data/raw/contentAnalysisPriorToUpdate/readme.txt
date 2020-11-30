@@ -1,1 +1,0 @@
-These files are the content analysis date before we updated the search on 12th Aug 2020. When we updated the search, a few records were no longer in the database, and we removed them from the files one level up (the files in this folder retained those records).
