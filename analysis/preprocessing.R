@@ -73,6 +73,16 @@ d_contentAnalysis <- d_contentAnalysis %>%
     TRUE ~ 'ERROR'
   ))
 
+# homogenize article type labels
+d_contentAnalysis <- d_contentAnalysis %>%
+  mutate(articleType = recode(articleType,
+                              'Data synthesis - Meta-analysis' = 'Data synthesis - meta-analysis',
+                              'Empirical data -laboratory study' = 'Empirical data - laboratory study',
+                              'Empirical data -field study' = 'Empirical data - field study',
+                              'Review' = 'No empirical data',
+                              'Data synthesis - Systematic Review' = 'No empirical data',
+                              'Data synthesis' = 'Data synthesis - meta-analysis'))
+
 ### Save file
 save(d_contentAnalysis, file = here('data','processed','/d_contentAnalysis.rds'))
 
