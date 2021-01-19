@@ -5,6 +5,7 @@ protocol/
 figs/
 data/OLD/
 data/raw/
+RRR_AnnRev/
 
 # History files
 .Rhistory
@@ -55,3 +56,4 @@ analysis/.DS_Store
 analysis/preliminaryAnalysis_PRCP_20July2020.docx
 analysis/~$eliminaryAnalysis.docx
 analysis/rawToPrimary.R
+analysis/preliminaryAnalysis.Rmd
