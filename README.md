@@ -1,2 +1,2 @@
-Preliminary analyses for the project "Post-replication citation patterns in psychology"
+Data and analyses for the project "Post-replication citation patterns in psychology"
  
