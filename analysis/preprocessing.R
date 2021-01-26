@@ -59,7 +59,8 @@ d_contentAnalysis <- d_contentAnalysis %>%
     exclusionReason,
     articleType,
     citationClassificationOriginal,
-    citationClassificationAgreed
+    citationClassificationAgreed,
+    counterArguments
   ),factor) %>% # to the factor type 
 mutate(pubYear = as.numeric(pubYear))
 
@@ -85,7 +86,4 @@ d_contentAnalysis <- d_contentAnalysis %>%
 
 ### Save file
 save(d_contentAnalysis, file = here('data','processed','/d_contentAnalysis.rds'))
-
-# Tidy up
-rm(list = ls()) # remove all objects from the R environment
    
