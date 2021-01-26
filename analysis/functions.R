@@ -117,7 +117,33 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
       replicationYear = # replication year
       ifelse(pubYear == replicationYear, TRUE, FALSE)
     )
+  
+  # add a row summarise the entire post-replication period
+  
+  # define post-replication period
+  postRepPeriod <- as.character(seq(replicationYear+1,2019,1))
 
+  d <- rbind(d, d %>% 
+    filter(year %in% postRepPeriod) %>%
+    summarise(case = thisCase, 
+              pubYear = 'post-replication', 
+              citesTarget = sum(citesTarget), 
+              citesTarget_std =sum(citesTarget_std), 
+              year = 'post-replication', 
+              citesRef = sum(citesRef),
+              citesRef_std = sum(citesRef_std), 
+              equivocal = sum(equivocal), 
+              favourable = sum(favourable), 
+              unclassifiable = sum(unclassifiable),
+              unfavourable = sum(unfavourable),
+              citesRep_no = sum(citesRep_no), 
+              citesRep_yes = sum(citesRep_yes), 
+              excluded_no = sum(excluded_no),
+              excluded_yes = sum(excluded_yes),
+              counterargs_no = sum(counterargs_no),
+              counterargs_yes =sum(counterargs_yes), 
+              standardizationYear = FALSE, 
+              replicationYear = FALSE))
 
   # compute extrapolations for the Baumeister case
   ## because there were so many citations for the Baumeister case, we only classified a random sample of 40% of relevant citations across each of  the pre-refutation period and post-refutation period
@@ -126,7 +152,7 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
 
   ## get the proportion actually coded in each year
   contentProp <- d %>%
-    filter(pubYear %in% c("2015", "2017", "2018", "2019")) %>%
+    filter(pubYear %in% c("2015", "2017", "2018", "2019", "post-replication")) %>%
     mutate(contentProp = (favourable + unfavourable + equivocal + unclassifiable + excluded_yes) / citesTarget) %>%
     pull(contentProp)
 
@@ -138,6 +164,7 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
         pubYear == "2017" ~ favourable * (1 / contentProp[2]),
         pubYear == "2018" ~ favourable * (1 / contentProp[3]),
         pubYear == "2019" ~ favourable * (1 / contentProp[4]),
+        pubYear == "post-replication" ~ favourable * (1 / contentProp[5]),
       ),
       NA # for other cases nothing is needed
     )) %>% 
@@ -147,6 +174,7 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
         pubYear == "2017" ~ unfavourable * (1 / contentProp[2]),
         pubYear == "2018" ~ unfavourable * (1 / contentProp[3]),
         pubYear == "2019" ~ unfavourable * (1 / contentProp[4]),
+        pubYear == "post-replication" ~ unfavourable * (1 / contentProp[5]),
       ),
       NA # for other cases nothing is needed
     )) %>% 
@@ -156,6 +184,7 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
         pubYear == "2017" ~ equivocal * (1 / contentProp[2]),
         pubYear == "2018" ~ equivocal * (1 / contentProp[3]),
         pubYear == "2019" ~ equivocal * (1 / contentProp[4]),
+        pubYear == "post-replication" ~ equivocal * (1 / contentProp[5]),
       ),
       NA # for other cases nothing is needed
     )) %>% 
@@ -165,6 +194,7 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
         pubYear == "2017" ~ unclassifiable * (1 / contentProp[2]),
         pubYear == "2018" ~ unclassifiable * (1 / contentProp[3]),
         pubYear == "2019" ~ unclassifiable * (1 / contentProp[4]),
+        pubYear == "post-replication" ~ unclassifiable * (1 / contentProp[5]),
       ),
       NA # for other cases nothing is needed
     )) %>%
@@ -174,6 +204,7 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
         pubYear == "2017" ~ citesRep_no * (1 / contentProp[2]),
         pubYear == "2018" ~ citesRep_no * (1 / contentProp[3]),
         pubYear == "2019" ~ citesRep_no * (1 / contentProp[4]),
+        pubYear == "post-replication" ~ citesRep_no * (1 / contentProp[5]),
       ),
       NA # for other cases nothing is needed
     )) %>%
@@ -183,6 +214,7 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
         pubYear == "2017" ~ citesRep_yes * (1 / contentProp[2]),
         pubYear == "2018" ~ citesRep_yes * (1 / contentProp[3]),
         pubYear == "2019" ~ citesRep_yes * (1 / contentProp[4]),
+        pubYear == "post-replication" ~ citesRep_yes * (1 / contentProp[5]),
       ),
       NA # for other cases nothing is needed
     )) %>%
@@ -192,6 +224,7 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
         pubYear == "2017" ~ excluded_no * (1 / contentProp[2]),
         pubYear == "2018" ~ excluded_no * (1 / contentProp[3]),
         pubYear == "2019" ~ excluded_no * (1 / contentProp[4]),
+        pubYear == "post-replication" ~ excluded_no * (1 / contentProp[5]),
       ),
       NA # for other cases nothing is needed
     )) %>%
@@ -201,6 +234,7 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
         pubYear == "2017" ~ excluded_yes * (1 / contentProp[2]),
         pubYear == "2018" ~ excluded_yes * (1 / contentProp[3]),
         pubYear == "2019" ~ excluded_yes * (1 / contentProp[4]),
+        pubYear == "post-replication" ~ excluded_yes * (1 / contentProp[5]),
       ),
       NA # for other cases nothing is needed
     ))
@@ -234,12 +268,16 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
 # this function plots a citation curve
 citationCurve <- function(
                           thisCase, # identify case (string)
+                          thisTitle, # define graph title (string)
                           zoom = F, # show full citation history (F) or zoom in on years around replication (T)
                           areaPlot = F, # add area plot with 'citesReplication' or 'classification'. F = no area plot
                           plotReference = T, # plot the reference class (T) or not (F)
                           standardized = T # use standarized citations (T) or not (F)
 ) {
-  d <- d_summary %>% filter(case == thisCase) # extract the data for this case
+  d <- d_summary %>% 
+    filter(case == thisCase) %>% # extract the data for this case
+    filter(year != 'post-replication') %>% # remove the summary row for the post-replication period
+    mutate(pubYear = as.numeric(pubYear)) # reset pubyear to numeric
 
   replicationYear <- d %>% # identify the replication year for this case
     filter(replicationYear == T) %>%
@@ -513,7 +551,7 @@ citationCurve <- function(
       axis.title.y = element_blank(),
       axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
     ) +
-    ggtitle(str_to_upper(thisCase)) # add title
+    ggtitle(thisTitle) # add title
 
   return(basePlot)
 }
