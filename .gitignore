@@ -5,7 +5,6 @@ protocol/
 figs/
 data/OLD/
 data/raw/
-RRR_AnnRev/
 
 # History files
 .Rhistory
