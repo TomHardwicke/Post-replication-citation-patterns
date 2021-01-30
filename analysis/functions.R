@@ -287,6 +287,9 @@ citationCurve <- function(
   if (standardized == T) { # if standardizing then all cases can use same y axis (except for Caruso when we standardize to the replication year...)
     if (thisCase == "caruso") {
       yMax <- 300
+      yInc <- 50
+    } else if (thisCase == "carter") {
+      yMax <- 150
       yInc <- 25
     } else {
       yMax <- 125
@@ -475,7 +478,7 @@ citationCurve <- function(
     # include legend for top row plots only
     if (thisCase %in% c("baumeister", "strack")) { # if standardizing then all cases can use same y axis
       basePlot <- basePlot +
-        scale_fill_manual(name = "", values = p1)
+        scale_fill_manual(name = "Citation valence: ", values = p1)
     } else {
       basePlot <- basePlot +
         scale_fill_manual(name = "", values = p1, guide = F)
@@ -504,7 +507,7 @@ citationCurve <- function(
     # include legend for top row plots only
     if (thisCase %in% c("baumeister", "strack")) { # if standardizing then all cases can use same y axis
       basePlot <- basePlot +
-        scale_fill_manual(name = "", values = p2)
+        scale_fill_manual(name = "Citation balance/bias: ", values = p2)
     } else {
       basePlot <- basePlot +
         scale_fill_manual(name = "", values = p2, guide = F)
@@ -538,7 +541,7 @@ citationCurve <- function(
     annotate( # plot arrow marking replication year
       "segment",
       x = replicationYear,
-      y = 125,
+      y = yMax,
       xend = replicationYear,
       yend = 3,
       size = 1,
