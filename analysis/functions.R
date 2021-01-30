@@ -440,7 +440,7 @@ citationCurve <- function(
     basePlot <- basePlot +
       geom_area(
         alpha = .5,
-        aes(fill = var, colour = var),
+        aes(fill = var),
         data = d %>%
           filter(
             pubYear %in% c(replicationYear + .5, seq(replicationYear + 1, max(pubYear))),
@@ -456,7 +456,7 @@ citationCurve <- function(
       ) +
       geom_area(
         alpha = .5,
-        aes(fill = var, colour = var),
+        aes(fill = var),
         data = d %>%
           filter(
             pubYear %in% c(replicationYear - 1, replicationYear - .5),
