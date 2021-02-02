@@ -86,4 +86,20 @@ d_contentAnalysis <- d_contentAnalysis %>%
 
 ### Save file
 save(d_contentAnalysis, file = here('data','processed','/d_contentAnalysis.rds'))
+
+## Coauthor data
+
+### Load files
+d_coauthors <- data.frame() # create empty list to hold data frames for each case
+for(i in caseNames){ # loop through case names
+  filePath <- here('data','primary', paste0(i,'Coauthors.csv')) # create file path
+  d <- read_csv(filePath, col_types = cols(.default = "c")) # load the data
+  d <- d %>% mutate(case = i)
+  d_coauthors <- bind_rows(d_coauthors, d) # append to dataframe
+}
+
+### Apply munging
+
+### Save file
+save(d_coauthors, file = here('data','processed','/d_coauthors.rds'))
    
