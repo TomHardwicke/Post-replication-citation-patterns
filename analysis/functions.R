@@ -442,7 +442,7 @@ citationCurve <- function(
   if (areaPlot == "classification") {
     basePlot <- basePlot +
       geom_area(
-        alpha = .5,
+        alpha = .4,
         aes(fill = var),
         data = d %>%
           filter(
@@ -458,7 +458,7 @@ citationCurve <- function(
           mutate(var = fct_drop(var))
       ) +
       geom_area(
-        alpha = .5,
+        alpha = .4,
         aes(fill = var),
         data = d %>%
           filter(
@@ -488,7 +488,7 @@ citationCurve <- function(
   if (areaPlot == "citesReplication") {
     basePlot <- basePlot +
       geom_area(
-        alpha =.5,
+        alpha =.4,
         aes(fill = var),
         data = d %>%
           filter(
