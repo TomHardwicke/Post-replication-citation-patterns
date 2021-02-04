@@ -1,0 +1,10 @@
+install.packages(
+  "ggpubr",
+  "here",
+  "kableExtra",
+  "knitr",
+  "papaja",
+  "rmarkdown",
+  "tidylog",
+  "tidyverse"
+)
