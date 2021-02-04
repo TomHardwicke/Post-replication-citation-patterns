@@ -1,0 +1,53 @@
+# Appendix A: Protocol Changes {#appA}
+
+
+
+
+
+# Appendix B title {#appB}
+
+Tabular data for citation curves and citation valence
+
+```{r results = "asis"}
+options(knitr.kable.NA = "-") # set symbol to use for NA cells
+
+d_summary %>%
+  filter(case == 'baumeister' & pubYear %in% c(2015,2017,2018,2019) |
+         case == 'strack' & pubYear %in% c(2015,2017,2018,2019) |
+         case == 'sripada' & pubYear %in% c(2015,2017,2018,2019) |
+         case == 'carter' & pubYear %in% c(2013,2015,2016,2017,2018,2019) |
+         case == 'caruso' & pubYear %in% c(2013,2015,2016,2017,2018,2019)) %>%
+  mutate(favourable = paste0(favourable,' (',round(favourable_prop*100,0),'%)'),
+         unfavourable = paste0(unfavourable,' (',round(unfavourable_prop*100,0),'%)'),
+         equivocal = paste0(equivocal,' (',round(equivocal_prop*100,0),'%)'),
+         unclassifiable = paste0(unclassifiable,' (',round(unclassifiable_prop*100,0),'%)'),
+         excluded = paste0(excluded_yes,' (',round(excluded_yes_prop*100,0),'%)'),
+         citesRep = paste0(citesRep_yes,' (',round(citesRep_yes_prop*100,0),'%)'),
+         citesRep = ifelse(case %in% c('baumeister','sripada','strack') & pubYear == 2015, NA, citesRep), # set citesRep to NA in pre-replication year
+         citesRep = ifelse(case %in% c('carter','caruso') & pubYear == 2013, NA, citesRep)) %>% # set citesRep to NA in pre-replication year
+  select(year = pubYear, `citing\narticles` = citesTarget, excluded, unclassifiable, favourable, equivocal, unfavourable, citesRep) %>%
+  kable(caption = 'Counts (percentages) for citations to the original study, exclusions, citation valence, and concomitant citations to replication study in the time periods subjected to qualitative analysis. Percentages for the Baumeister case are extrapolations based on 40\\% random samples drawn from the pre-replication and post-replication time periods.', booktabs=T, longtable=T) %>%
+  pack_rows("Baumeister", 1, 4) %>%
+  pack_rows("Sripada", 5, 8) %>%
+  pack_rows("Strack", 9, 12) %>%
+  pack_rows("Carter", 13, 18) %>%
+  pack_rows("Caruso", 19, 24)
+```
+
+```{r}
+# DATA SUMMARISED FOR POST-REPLICATION PERIOD
+d_summary %>%
+  filter(year == 'post-replication') %>%
+  mutate(favourable = paste0(favourable,' (',round(favourable_prop,2),')'),
+         unfavourable = paste0(unfavourable,' (',round(unfavourable_prop,2),')'),
+         equivocal = paste0(equivocal,' (',round(equivocal_prop,2),')'),
+         unclassifiable = paste0(unclassifiable,' (',round(unclassifiable_prop,2),')'),
+         excluded = paste0(excluded_yes,' (',round(excluded_yes_prop,2),')'),
+         citesRep = paste0(citesRep_yes,' (',round(citesRep_yes_prop,2),')')) %>%
+  select(case, year = pubYear, `citing\narticles` = citesTarget, excluded, unclassifiable, favourable, equivocal, unfavourable, citesRep)
+```
+
+
+
+
+
