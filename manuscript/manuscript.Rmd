@@ -54,7 +54,7 @@ tablelist         : no
 footnotelist      : no
 lineno            : yes
 
-lang              : "english"
+lang              : "en-US"
 class             : "man"
 
 output            : 
@@ -76,220 +76,422 @@ library(kableExtra) # for table formatting
 
 ```{r perform_preprocessing}
 # loads raw data, performs preprocessing, saves preprocessed files
-source(here('analysis','preprocessing.R'))
+source(here("analysis", "preprocessing.R"))
 ```
 
 ```{r load_data}
 # loads the processed data files output by the preprocessing performed above
-load(here('data','processed','d_citations.rds'))
-load(here('data','processed','d_reference.rds'))
-load(here('data','processed','d_contentAnalysis.rds'))
-load(here('data','processed','d_coauthors.rds'))
+load(here("data", "processed", "d_citations.rds"))
+load(here("data", "processed", "d_reference.rds"))
+load(here("data", "processed", "d_contentAnalysis.rds"))
+load(here("data", "processed", "d_coauthors.rds"))
 ```
 
 ```{r load_functions}
 # load custom functions
-source(here('analysis','functions.R'))
+source(here("analysis", "functions.R"))
 ```
 
 ```{r add_standardized_citation_counts}
 # identify the five different case studies we are looking at
-caseNames <- c('baumeister', 'sripada', 'strack', 'carter', 'caruso')
+caseNames <- c("baumeister", "sripada", "strack", "carter", "caruso")
 replicationYears <- c(2016, 2016, 2016, 2014, 2014)
 
 # set up some colour palettes
 teal <- "#00798c"
-blue <- 'dodgerblue4'
-red <-"#CC6677"
+blue <- "dodgerblue4"
+red <- "#CC6677"
 yellow <- "#DDCC77"
 lightgrey <- "grey75"
 darkgrey <- "grey35"
 beige <- "#D55E00"
 
-p1 <- c(lightgrey,darkgrey,red,yellow,teal)
-p2 <- c(lightgrey,beige,blue)
+p1 <- c(lightgrey, darkgrey, red, yellow, teal)
+p2 <- c(lightgrey, beige, blue)
 
 # summarizes data at the year level for each case and adds standardized citation counts for target citations and reference class citations
 d_summary <- data.frame() # create empty list to hold data frames for each case
-for(i in seq(1,5)){ # loop through cases
+for (i in seq(1, 5)) { # loop through cases
   d <- standardizeCitations(
     thisCase = caseNames[i],
-    citationData = d_citations %>% filter(case == caseNames[i]), 
+    citationData = d_citations %>% filter(case == caseNames[i]),
     referenceData = d_reference %>% filter(case == caseNames[i]),
     contentData = d_contentAnalysis %>% filter(case == caseNames[i]),
-    replicationYear = replicationYears[i])
+    replicationYear = replicationYears[i]
+  )
   d_summary <- bind_rows(d_summary, d) # append to dataframe
 }
 ```
 
-# Results
-
-```{r}
-excluded_n <- d_contentAnalysis %>% filter(excluded == T) %>% nrow() 
-excluded_reason <-  d_contentAnalysis %>% filter(excluded == T) %>% count(exclusionReason)
-noAccess_n <- excluded_reason %>% filter(exclusionReason == 'No access') %>% pull(n)
-nonEnglish_n <- excluded_reason %>% filter(exclusionReason == 'Non-English language') %>% pull(n)
-refCiteOnly_n <- excluded_reason %>% filter(exclusionReason == 'Cited in references but not in text') %>% pull(n)
-noCite_n <- excluded_reason %>% filter(exclusionReason == 'Does not cite target or replication') %>% pull(n)
+```{r patterns}
+tibble(
+  "Progressive responses" = c(1, 2),
+  "Regressive responses" = c(1, 2)
+) %>%
+  apa_table(caption = "Progressive or regressive responses to strongly contradictory replication results and their expected impact on citation patterns for original studies.")
 ```
 
-We excluded `r excluded_n` citing articles from the qualitative analysis because we could not access the full text (n = `r noAccess_n`), they were non-English language (n = `r nonEnglish_n`), they included a citation to the original study in the reference section, but not in the main text (n = `r refCiteOnly_n`), or after manual inspection ßthey did not actually appear to cite the original study at all (n = `r noCite_n`).
+# Methods
 
-## Article characteristics
+The study protocol (rationale, methods, and analysis plan) was pre-registered on April 7th 2018 (https://osf.io/eh5qd/). An amended protocol was registered part way through data collection on May 1st 2019, primarily because we extended the sampling frame to cover additional months (https://osf.io/pdvb5/). All deviations from these protocols are explicitly acknowledged in Supplementary Information \@ref(appA). All data exclusions and measures conducted during this study are reported. 
 
-```{r}
-artTyp <- d_contentAnalysis %>% 
-  filter(excluded == F) %>% 
-  count(articleType) %>%
-  mutate(percent = round(n/sum(n),2)*100)
+## Design
+This was a retrospective observational study consisting of four case studies. Primary outcome variables were annual citation counts for original studies, citation valence (favourable, equivocal, unfavourable), co-citation of original and replication studies, frequency/type of counter-arguments.
 
-noData <- artTyp %>% filter(articleType == 'No empirical data')
-metaAnalysis <- artTyp %>% filter(articleType == 'Data synthesis - meta-analysis')
-caseStudy <- artTyp %>% filter(articleType == 'Empirical data - case study')
-comment <- artTyp %>% filter(articleType == 'Empirical data - commentary including analysis')
-fieldStudy <- artTyp %>% filter(articleType == 'Empirical data - field study')
-labStudy <- artTyp %>% filter(articleType == 'Empirical data - laboratory study')
-multipleStudy <- artTyp %>% filter(articleType == 'Empirical data - multiple study types are reported')
-surveyStudy <- artTyp %>% filter(articleType == 'Empirical data - survey')
+## Sample
+We examined four case studies in which a prominent pre-registered and multi-laboratory replication study strongly contradicted and outweighed the findings of an original study (Table \@ref(tab:studyDetails)). 
+
+```{r studyDetails}
+tibble(
+  "Original Study" = c("Baumeister et al. (May, 1998)", "Sripada et al. (April, 2014)", "Strack et al. (May, 1988)", "Caruso et al. (July, 2012)", "Carter et al. (July, 2011)"),
+  "Replication study" = c("Hagger et al. (July, 2016)**", "Hagger et al. (July, 2016)**", "Wagenmakers et al. (October, 2016)", "Klein et al. (January, 2014)", "Klein et al. (January, 2014)"),
+  "Effect" = c("Ego-depletion", "Ego-depletion", "Facial feedback", "Money priming", "Flag priming"),
+  "Total citations to original*" = c("1974", "36", "708", "57", "54"),
+  "Original sample size" = c("k = 1 N = 67", "k = 1 N = 26", "k = 1 N = 92", "k = 1 N = 30", "k = 1 N = 70"),
+  "Replication sample size" = c("k = 23 N = 2,141", "k = 23 N = 2,141", "k = 17 N = 2,124", "k = 36 N = 6,333", "k = 36 N = 4,896"),
+  "Original effect size [95% CI]" = c("d = 2.05 [1.31, 2.79]", "d = 0.68 [0.09, 1.27]", "MD = 0.82 [-0.05, 1.69]", "d = 0.8 [0.05. 1.54]", "d = 0.50 [.01, .99]"),
+  "Replication effect size [95% CI]" = c("d = 0.04 [-0.07, 0.15]", "d = 0.04 [-0.07, 0.15]", "MD = 0.03 [-0.11, 0.16]", "d = .01 [-.06, 0.09]", "d = .01 [-.07, 0.08]")
+) %>%
+  kable(booktabs = T, longtable = T, caption = "Sample sizes and effect sizes for replication studies and original studies. d = Cohen’s d; MD = mean difference; k = number of data collection sites; N = total number of participants; CI = confidence interval. Publication dates are earliest available (i.e., ‘online first’ where relevant).") %>%
+  kable_styling(font_size = 10) %>%
+  column_spec(1, "1.8cm") %>%
+  column_spec(2, "1.8cm") %>%
+  column_spec(3, "1.5cm") %>%
+  column_spec(4, "1.5cm") %>%
+  column_spec(5, "1.5cm") %>%
+  column_spec(6, "1.5cm") %>%
+  column_spec(7, "1.8cm") %>%
+  column_spec(8, "1.8cm") %>%
+  footnote(
+    symbol = c("Total citations to the original study between the publication date and 31st December, 2019.", "For methodological reasons (see Hagger et al., 2016), the ego-depletion replication was aimed at a classic study in the field (Baumeister et al., 1998), but actually employed a modified computer-based version of the original paradigm (Sripada et al., 2014). We examined post-replication citation patterns for both studies."), symbol_manual = c("*", "**"),
+    footnote_as_chunk = T, threeparttable = T
+  )
 ```
 
-The research design of citing articles was classified as 'laboratory study' (n = `r labStudy$n`, `r labStudy$percent`%), 'no empirical data' (n = `r noData$n`, `r noData$percent`%), 'survey' (n = `r surveyStudy$n`, `r surveyStudy$percent`%), 'field study' (n = `r fieldStudy$n`, `r fieldStudy$percent`%), 'multiple study types' (n = `r multipleStudy$n`, `r multipleStudy$percent`%), 'meta-analysis' (n = `r metaAnalysis$n`, `r metaAnalysis$percent`%), 'commentary including data analysis' (n = `r comment$n`, `r comment$percent`%), or 'case study' (n = `r caseStudy$n`, `r caseStudy$percent`%).
+## Procedure
 
-## Annual citation counts and citation valence
+### Annual citation counts
+Citation histories (i.e., bibliographic records for all articles that cite the original study) from the publication date of each original study through to 31st December, 2019, were downloaded from Clarivate Analytics Web of Science Core Collection accessed via the Charité – Universitätsmedizin Berlin on 12th August, 2020. We also obtained citation histories for a reference class - all articles published in the same journal and the same year as each original study - from the same source. For example, for Baumeister et al. (1998) the reference class was all articles published in 1998 in the Journal of Personality and Social Psychology. Citation counts were standardized in each case study by setting the citation count in the replication year to the standardized value of ‘100’ and then adjusting the counts in other years according to the same transformation ratio. For example, if the raw citation count in the replication year was 1000, citation counts in each year were standardized by dividing by 10. This computation was performed separately for the reference class and citations to the original article.
+
+### Qualitative assessment
+Qualitative assessment of citation patterns was limited to a time period starting one year prior to the year of publication of the replication study up until 31st December, 2019, excluding the year in which the replication was published. We excluded the replication year because it may be unreasonable to expect citing articles already in the publication pipeline to cite the replication study. For the Baumeister case, the qualitative analysis was based on a random sample of 40% of citing articles from the pre-replication period and post-replication period due to the large number of citations to the original study (n = `r d_citations %>% filter(case=='baumeister') %>% nrow()`; see Supplementary Information \@ref(appB) for details).
+
+For each citing article undergoing qualitative assessment, we attempted to retrieve the full text via at least two of the institutional libraries we are affiliated with. Inaccessible articles were excluded. For articles for which we could obtain the full text, we classified the research design according to the categories in Table \@ref(tab:articleTypes) and recorded whether the replication study was cited after manual inspection of the reference section (see Table \@ref(tab:patterns): citation balance/bias). 
 
 ```{r}
 # identify how many times valence classifications were changed following discussion between primary and secondary coder
-classChange <- d_contentAnalysis %>% filter(excluded == F) %>% mutate(classificationChange = citationClassificationOriginal != citationClassificationAgreed) %>% count(classificationChange) %>% mutate(percent = round(n/sum(n)*100))
+classChange <- d_contentAnalysis %>%
+  filter(excluded == F) %>%
+  mutate(classificationChange = citationClassificationOriginal != citationClassificationAgreed) %>%
+  count(classificationChange) %>%
+  mutate(percent = round(n / sum(n) * 100))
 ```
 
-Figure \@ref(fig:citeCurves) shows standardized annual citation counts for each original study, the respective reference class (citations to all articles published in the same year and same journal as the original study), and classifications of citation valence (favourable, equivocal, unfavourable). The data can also be viewed in tabular format in (LINK TO APPENDIX). Valence classifications by the primary coder were modified after discussion with the secondary coder in `r classChange %>% filter(classificationChange == T) %>% pull(n)` (`r classChange %>% filter(classificationChange == T) %>% pull(percent)`%) cases.
+To examine the belief correction/perpetuation pattern (Table \@ref(tab:patterns)), the primary coder manually extracted the ‘citation context’ of the original study and the replication study (i.e., all relevant verbatim text surrounding each in-text citation). The primary coder then classified the citation valence as ‘favourable’, ‘equivocal’, ‘unfavourable’, or ‘unclassifiable’. Favourable citations were those used to support a positive claim about the phenomenon of interest whereas unfavourable citations were used to support a negative claim about the phenomenon of interest. Citations were considered equivocal if the authors did not take a predominantly favourable or unfavourable position. Citations that did not endorse or oppose the phenomenon of interest (for example, simply referring to the procedures of the original study) were designated as ‘unclassifiable’. Because this process was inherently subjective, the citation contexts and classifications were also examined by a secondary coder. Disagreements were resolved through discussion and a third coder arbitrated when necessary. Valence classifications by the primary coder were modified after discussion with the secondary coder in `r classChange %>% filter(classificationChange == T) %>% pull(n)` (`r classChange %>% filter(classificationChange == T) %>% pull(percent)`%) cases.
 
-```{r citeCurves, fig.cap='Standardized annual citation counts (solid line) for the five original studies with citation valence (favourable, equivocal, unfavourable, unclassifiable) illustrated by coloured areas in pre-replication and post-replication assessment periods. Dashed line depicts citations to the reference class (all articles published in the same journal and same year as the target article). Annual citation counts are standardized against the year in which the replication was published (citation counts in the replication year, indicated by a black arrow, are set at the standardized value of 100). Citation valence classifications for the Baumeister case are extrapolated to all articles in the assessment period based on a 40% random sample.', fig.width=12, fig.height=12.5, fig.path='figs/'}
+To examine the explicit/absent defence pattern (Table \@ref(tab:patterns)), the primary coder flagged articles that co-cited the original and replication studies that also contained any explicit defence of the original study. Subsequently, two team members (ORA and SC) re-examined all of the flagged cases, extracted verbatim counter-arguments, and developed a post-hoc categorisation scheme that summarised them as concisely and informatively as possible (Table \@ref(tab:caCategories)). Coding disagreements were resolved through discussion and a third coder (TEH) arbitrated when necessary.
+
+In additional exploratory (not pre-registered) analyses, we examined overlap of authorship for articles that provided counter-arguments with (1) any of the authors of the original studies; and (2) any prior collaborators of the first authors of the original studies. These analyses are complicated by the fact that author names in bibliographic records do not always adhere to the same grammatical standards - for example, whether forenames are initialised or middle names are included - so it is not straightforward to isolate individual authors within bibliographic databases. In order to identify prior collaborators of the first authors of the original studies, we downloaded bibliographic records (on 2nd February, 2021) for all papers published by each of the original study first authors, according to their author record in the Web of Science Core Collection. These author records are automatically generated by an algorithm that attempts to identify all documents likely published by an individual author using several variations of their name (for example, “Hardwicke, Tom E.”, “Hardwicke, Tom”,  “Hardwicke, T. E.”), but errors can still occur and incomplete database coverage means that this method likely misses some of the authors’ prior publications and thus some of their collaborators. Nevertheless, the method supports a reasonable lower-bound estimate of authorship overlap with articles providing counter-arguments. To identify authorship overlap, we used string manipulation tools in R to extract only author surnames from bibliographic records and then used string matching to automatically detect the presence of original author or collaborator surnames amongst the surnames of authors of articles that provided counter-arguments. When a match was detected, it was verified by manual examination of the authors’ full names.
+
+# Results
+
+```{r}
+excluded_n <- d_contentAnalysis %>%
+  filter(excluded == T) %>%
+  nrow()
+excluded_reason <- d_contentAnalysis %>%
+  filter(excluded == T) %>%
+  count(exclusionReason)
+noAccess_n <- excluded_reason %>%
+  filter(exclusionReason == "No access") %>%
+  pull(n)
+nonEnglish_n <- excluded_reason %>%
+  filter(exclusionReason == "Non-English language") %>%
+  pull(n)
+refCiteOnly_n <- excluded_reason %>%
+  filter(exclusionReason == "Cited in references but not in text") %>%
+  pull(n)
+noCite_n <- excluded_reason %>%
+  filter(exclusionReason == "Does not cite target or replication") %>%
+  pull(n)
+notexcluded_n <- d_contentAnalysis %>%
+  filter(excluded == F) %>%
+  nrow()
+```
+
+In total, `r d_citations %>% nrow()` articles cited one of the original studies of which `r d_contentAnalysis %>% nrow()` articles (after taking a 40% random sample in the Baumeister case) fell within the time period designated for qualitative assessment. Of these `r d_contentAnalysis %>% nrow()` articles, we excluded `r excluded_n` from the qualitative analysis because (1) we could not access the full text (n = `r noAccess_n`); (2) they were non-English language (n = `r nonEnglish_n`); (3) they included a citation to the original study in the reference section, but not in the main text (n = `r refCiteOnly_n`); or (4) manual inspection indicated that they did not actually appear to cite the original study at all (n = `r noCite_n`). Research design classifications for the remaining `r notexcluded_n` articles included in the qualitative analysis are shown in Table \@ref(tab:articleTypes).
+
+## Article characteristics
+
+```{r articleTypes}
+d_contentAnalysis %>%
+  filter(excluded == F) %>%
+  count(articleType) %>%
+  mutate("Count (%)" = paste0(n, " (", round(n / sum(n), 2) * 100, ")")) %>%
+  select("Article type" = articleType, "Count (%)", -n) %>%
+  apa_table(caption = "Counts and percentages for research design classifications of articles included in qualitative analyses")
+```
+
+## Annual citation counts and citation valence
+
+Figure \@ref(fig:citeCurves) shows standardized annual citation counts for each original study and the respective reference class (citations to all articles published in the same year and same journal as the original study), and classifications of citation valence (favourable, equivocal, unfavourable, unclassifiable or excluded). The data can also be viewed in tabular format in Supplementary Table \@ref(tab:tabularData). All counts (n) reported in the text and table are raw counts (i.e., not standardized).
+
+```{r citeCurves, fig.cap='Standardized annual citation counts (solid line) for the five original studies with citation valence (favourable, equivocal, unfavourable, unclassifiable) illustrated by coloured areas in pre-replication and post-replication assessment periods. Dashed line depicts citations to the reference class (all articles published in the same journal and same year as the target article). Annual citation counts are standardized against the year in which the replication was published (citation counts in the replication year, indicated by a black arrow, are set at the standardized value of 100). Citation valence classifications for the Baumeister case are extrapolated to all articles in the assessment period based on a 40% random sample.', fig.width=12, fig.height=12.5, fig.path='figs/', dev=c('png', 'pdf')}
 ggarrange(
-  ggarrange(citationCurve('strack', thisTitle = 'Strack et al. (1988)', standardized = T, plotReference = T, areaPlot = "classification"),
-          citationCurve('baumeister', thisTitle = 'Baumeister et al. (1998)', standardized = T, plotReference = T, areaPlot = "classification"),
-          nrow = 2, ncol = 1, common.legend = T), 
-  ggarrange(citationCurve('sripada', thisTitle = 'Sripada et al. (2014)', standardized = T, plotReference = T, areaPlot = "classification"),
-          citationCurve('carter', thisTitle = 'Carter et al. (2011)', standardized = T, plotReference = T, areaPlot = "classification"),
-          citationCurve('caruso', thisTitle = 'Caruso et al. (2013)', standardized = T, plotReference = T, areaPlot = "classification"),
-          nrow = 1, ncol = 3, common.legend = F),
-  nrow = 2, ncol = 1, heights = c(2,1)) %>% 
+  ggarrange(citationCurve("strack", thisTitle = "Strack et al. (1988)", standardized = T, plotReference = T, areaPlot = "classification"),
+    citationCurve("baumeister", thisTitle = "Baumeister et al. (1998)", standardized = T, plotReference = T, areaPlot = "classification"),
+    nrow = 2, ncol = 1, common.legend = T
+  ),
+  ggarrange(citationCurve("sripada", thisTitle = "Sripada et al. (2014)", standardized = T, plotReference = T, areaPlot = "classification"),
+    citationCurve("carter", thisTitle = "Carter et al. (2011)", standardized = T, plotReference = T, areaPlot = "classification"),
+    citationCurve("caruso", thisTitle = "Caruso et al. (2013)", standardized = T, plotReference = T, areaPlot = "classification"),
+    nrow = 1, ncol = 3, common.legend = F
+  ),
+  nrow = 2, ncol = 1, heights = c(2, 1)
+) %>%
   annotate_figure(
     left = text_grob("Standardized citation count", rot = 90, size = 20),
-    bottom = text_grob("Publication year", size = 20))
+    bottom = text_grob("Publication year", size = 20)
+  )
 ```
+
+```{r}
+# compute maximum difference for 'other' cases (Sripada, Carter, Caruso)
+maxDiff <- max(c(d_summary %>% filter(case == "carter" & pubYear == "2019") %>% pull(citesTarget) - d_summary %>% filter(case == "carter" & pubYear == "2012") %>% pull(citesTarget), d_summary %>% filter(case == "caruso" & pubYear == "2019") %>% pull(citesTarget) - d_summary %>% filter(case == "caruso" & pubYear == "2013") %>% pull(citesTarget), d_summary %>% filter(case == "sripada" & pubYear == "2019") %>% pull(citesTarget) - d_summary %>% filter(case == "sripada" & pubYear == "2015") %>% pull(citesTarget)))
+```
+
+After the replication was published, citations to the reference classes were continuing their trend to plateau (Baumeister case) or increase (other cases). By contrast, citations to the original study appeared to undergo a modest decline in the Strack case (decreasing from `r d_summary %>% filter(case == 'strack', pubYear == '2015') %>% pull(citesTarget)` to `r d_summary %>% filter(case == 'strack', pubYear == '2019') %>% pull(citesTarget)` between 2015 and 2019), and a small decline followed by a small increase in the Baumeister case (increasing from `r d_summary %>% filter(case == 'baumeister', pubYear == '2015') %>% pull(citesTarget)` to `r d_summary %>% filter(case == 'baumeister', pubYear == '2019') %>% pull(citesTarget)` between 2015 and 2019). In the other cases (Sripada, Carter, Caruso), the total citation counts were much lower and there was considerable variability in the post-replication citation patterns; nevertheless, there was no substantial change in annual citations from pre- to post- replication in these three cases (the maximum difference was +`r maxDiff` citations).
+
+```{r}
+preRepFavRange <- d_summary %>%
+  filter(case == "carter" & pubYear == "2013" | case == "caruso" & pubYear == "2013" | case %in% c("sripada", "baumeister", "strack") & pubYear == "2015") %>%
+  pull(favourable_prop) %>%
+  range()
+
+preRepUnfav_Strack <- d_summary %>%
+  filter(case == "strack", pubYear == "2015") %>%
+  pull(unfavourable_prop)
+postRepUnfav_Strack <- d_summary %>%
+  filter(case == "strack", pubYear == "post-replication") %>%
+  pull(unfavourable_prop)
+preRepFav_Strack <- d_summary %>%
+  filter(case == "strack", pubYear == "2015") %>%
+  pull(favourable_prop)
+postRepFav_Strack <- d_summary %>%
+  filter(case == "strack", pubYear == "post-replication") %>%
+  pull(favourable_prop)
+
+preRepFav_Bau <- d_summary %>%
+  filter(case == "baumeister", pubYear == "2015") %>%
+  pull(favourable_prop)
+postRepFav_Bau <- d_summary %>%
+  filter(case == "baumeister", pubYear == "post-replication") %>%
+  pull(favourable_prop)
+
+unfavN_Bau2017 <- d_summary %>%
+  filter(case == "baumeister", pubYear == "2017") %>%
+  pull(unfavourable)
+unfavProp_Bau2017 <- d_summary %>%
+  filter(case == "baumeister", pubYear == "2017") %>%
+  pull(unfavourable_prop)
+unfavN_Bau2018 <- d_summary %>%
+  filter(case == "baumeister", pubYear == "2018") %>%
+  pull(unfavourable)
+unfavProp_Bau2018 <- d_summary %>%
+  filter(case == "baumeister", pubYear == "2018") %>%
+  pull(unfavourable_prop)
+unfavN_Bau2019 <- d_summary %>%
+  filter(case == "baumeister", pubYear == "2019") %>%
+  pull(unfavourable)
+unfavProp_Bau2019 <- d_summary %>%
+  filter(case == "baumeister", pubYear == "2019") %>%
+  pull(unfavourable_prop)
+```
+Prior to the replication, the vast majority of citations were favourable for all five articles (range `r round(preRepFavRange[1]*100,0)`% to `r round(preRepFavRange[2]*100,0)`%). In most cases (Strack, Sripada, Carter, and Caruso) there was a small post-replication increase in unfavourable citations and a small decrease in favourable citations, indicating a modest active correction pattern. However, the overall number of unfavourable citations was very low and there was still a substantial majority of favourable citations. For example, in the Strack case, unfavourable citations increased from `r preRepUnfav_Strack`% in the pre-replication period (2015) to `r round(postRepUnfav_Strack,2)*100`% in the post-replication period, whilst favourable citations decreased from `r round(preRepFav_Strack,2)*100`% to `r round(postRepFav_Strack,2)*100`%. In the Baumeister case, the proportion of favourable citations remained stable from pre-replication (`r round(preRepFav_Bau,2)*100`%) to post-replication (`r round(postRepFav_Bau,2)*100`%), a pattern consistent with belief perpetuation. The very small number of unfavourable citations (2017: n = `r unfavN_Bau2017`, `r round(unfavProp_Bau2017,2)*100`%; 2018: n = `r unfavN_Bau2018`, `r round(unfavProp_Bau2018,2)*100`%; 2019: n = `r unfavN_Bau2019`, `r round(unfavProp_Bau2019,2)*100`%) suggests that this is largely an unchallenged belief perpetuation pattern (see Table \@ref(tab:patterns)).
 
 ## Citation balance and citation bias
 
-Figure \@ref(fig:repPlot) shows the proportion of citing articles that also cited or did not cite the replication study after it was published (excluding the publication year itself). In the Strack and Baumeister cases, a considerable majority of articles citing the original study did not cite the replication study, indicating substantial *citation bias*. In the Baumeister case the proportion of articles citing the replication study actually fell from 20% to 16% between 2017-2019. In the Strack case, the proportion increased from 13% to 39%. In the Carter and Caruso cases, the proportion never exceeded 40%, also consistent with substantial *citation bias*. In the Sripada case, it was much more common for the replication study to be cited (>88%) reflecting a *balanced citation* effect.
+```{r}
+citesRep_Bau2017 <- d_summary %>%
+  filter(case == "baumeister", pubYear == "2017") %>%
+  pull(citesRep_yes_prop)
+citesRep_Bau2019 <- d_summary %>%
+  filter(case == "baumeister", pubYear == "2019") %>%
+  pull(citesRep_yes_prop)
 
-```{r repPlot, fig.cap='Standardized annual citation counts (solid line) for the five original studies with citation balance/bias (i.e., whether the replication is cited) illustrated by coloured areas in the post-replication assessment period. Dashed line depicts citations to the reference class (all articles published in the same journal and same year as the target article). Annual citation counts are standardized against the year in which the replication was published (citation counts in the replication year, indicated by a black arrow, are set at the standardized value of 100). Replication citation proportions for the Baumeister case are extrapolated to all articles in the assessment period based on a 40% random sample.', fig.width=12, fig.height=12.5, fig.path='figs/'}
+citesRep_Strack2017 <- d_summary %>%
+  filter(case == "strack", pubYear == "2017") %>%
+  pull(citesRep_yes_prop)
+citesRep_Strack2019 <- d_summary %>%
+  filter(case == "strack", pubYear == "2019") %>%
+  pull(citesRep_yes_prop)
+
+citesRep_carter_caruso_max <- d_summary %>%
+  filter(case %in% c("carter", "caruso")) %>%
+  pull(citesRep_yes_prop) %>%
+  max(na.rm = T)
+
+citesRep_sripada <- d_summary %>%
+  filter(case == "sripada") %>%
+  pull(citesRep_yes_prop) %>%
+  min(na.rm = T)
+```
+
+Figure \@ref(fig:repPlot) shows the proportion of citing articles that also cited or did not cite the replication study after it was published (excluding the publication year itself). The data can also be viewed in tabular format in Supplementary Table \@ref(tab:tabularData). In the Strack and Baumeister cases, a considerable majority of articles citing the original study did not cite the replication study, indicating substantial citation bias. In the Baumeister case the proportion of articles citing the replication study remained stable (`r round(citesRep_Bau2017,2)*100`% in 2017, `r round(citesRep_Bau2019,2)*100`% in 2019). In the Strack case, the proportion increased from `r round(citesRep_Strack2017,2)*100`% to `r round(citesRep_Strack2019,2)*100`%. In the Carter and Caruso cases, the proportion never exceeded `r round(citesRep_carter_caruso_max,2)*100`%, also consistent with substantial citation bias. In the Sripada case, it was much more common for the replication study to be cited (>`r round(citesRep_sripada,2)*100`%) reflecting a balanced citation pattern.
+
+```{r repPlot, fig.cap='Standardized annual citation counts (solid line) for the five original studies with citation balance/bias (i.e., whether the replication is cited) illustrated by coloured areas in the post-replication assessment period. Dashed line depicts citations to the reference class (all articles published in the same journal and same year as the target article). Annual citation counts are standardized against the year in which the replication was published (citation counts in the replication year, indicated by a black arrow, are set at the standardized value of 100). Replication citation proportions for the Baumeister case are extrapolated to all articles in the assessment period based on a 40% random sample.', fig.width=12, fig.height=12.5, fig.path='figs/', dev=c('png', 'pdf')}
 ggarrange(
-  ggarrange(citationCurve('strack', thisTitle = 'Strack et al. (1988)', areaPlot = 'citesReplication', zoom = T),
-          citationCurve('baumeister', thisTitle = 'Baumeister et al. (1998)', areaPlot = 'citesReplication', zoom = T),
-          nrow = 2, ncol = 1, common.legend = T), 
-  ggarrange(citationCurve('sripada', thisTitle = 'Sripada et al. (2014)', areaPlot = 'citesReplication', zoom = T),
-          citationCurve('carter', thisTitle = 'Carter et al. (2011)', areaPlot = 'citesReplication', zoom = T),
-          citationCurve('caruso', thisTitle = 'Caruso et al. (2013)', areaPlot = 'citesReplication', zoom = T),
-          nrow = 1, ncol = 3, common.legend = F),
-  nrow = 2, ncol = 1, heights = c(2,1)) %>% 
+  ggarrange(citationCurve("strack", thisTitle = "Strack et al. (1988)", areaPlot = "citesReplication", zoom = T),
+    citationCurve("baumeister", thisTitle = "Baumeister et al. (1998)", areaPlot = "citesReplication", zoom = T),
+    nrow = 2, ncol = 1, common.legend = T
+  ),
+  ggarrange(citationCurve("sripada", thisTitle = "Sripada et al. (2014)", areaPlot = "citesReplication", zoom = T),
+    citationCurve("carter", thisTitle = "Carter et al. (2011)", areaPlot = "citesReplication", zoom = T),
+    citationCurve("caruso", thisTitle = "Caruso et al. (2013)", areaPlot = "citesReplication", zoom = T),
+    nrow = 1, ncol = 3, common.legend = F
+  ),
+  nrow = 2, ncol = 1, heights = c(2, 1)
+) %>%
   annotate_figure(
     left = text_grob("Standardized citation count", rot = 90, size = 20),
-    bottom = text_grob("Publication year", size = 20))
+    bottom = text_grob("Publication year", size = 20)
+  )
 ```
 
 ## Explicit defence and absent defence
 
-
 ```{r}
-ca <- d_contentAnalysis %>% 
-  filter(citesReplication == T) %>% 
+# prepare table of counter-argument frequency
+
+## get proportion of counter arguments for each individual case
+ca <- d_contentAnalysis %>%
+  filter(citesReplication == T) %>%
   group_by(case, counterArguments, .drop = F) %>%
   summarise(n = n()) %>%
-  mutate(all = paste0(n,' (',round(n/sum(n),2),')')) %>%
+  mutate(all = paste0(n, " (", round(n / sum(n), 2), ")")) %>%
   select(-n)
 
-ca_everycase <- d_contentAnalysis %>% 
-  filter(citesReplication == T) %>% 
+## get proportion of counter arguments across all cases
+ca_everycase <- d_contentAnalysis %>%
+  filter(citesReplication == T) %>%
   group_by(counterArguments, .drop = F) %>%
   summarise(n = n()) %>%
-  mutate(case = factor('all cases'),
-         all = paste0(n,' (',round(n/sum(n),2),')')) %>%
+  mutate(
+    case = factor("all cases"),
+    all = paste0(n, " (", round(n / sum(n), 2), ")")
+  ) %>%
   select(-n)
 
 ca <- rbind(ca, ca_everycase)
 
-ca_fav <- d_contentAnalysis %>% 
-  filter(citesReplication == T) %>% 
-  filter(citationClassificationAgreed == 'favourable') %>%
+## get proportion of counter arguments for each individual case where articles cited original favourably
+ca_fav <- d_contentAnalysis %>%
+  filter(citesReplication == T) %>%
+  filter(citationClassificationAgreed == "favourable") %>%
   group_by(case, counterArguments, .drop = F) %>%
   summarise(n = n()) %>%
-  mutate(fav = paste0(n,' (',round(n/sum(n),2),')')) %>%
+  mutate(fav = paste0(n, " (", round(n / sum(n), 2), ")")) %>%
   select(-n)
 
-ca_fav_everycase <- d_contentAnalysis %>% 
-  filter(citesReplication == T) %>% 
-  filter(citationClassificationAgreed == 'favourable') %>%
+## get proportion of counter arguments across all cases where articles cited original favourably
+ca_fav_everycase <- d_contentAnalysis %>%
+  filter(citesReplication == T) %>%
+  filter(citationClassificationAgreed == "favourable") %>%
   group_by(counterArguments, .drop = F) %>%
   summarise(n = n()) %>%
-  mutate(case = factor('all cases'),
-         fav = paste0(n,' (',round(n/sum(n),2),')')) %>%
+  mutate(
+    case = factor("all cases"),
+    fav = paste0(n, " (", round(n / sum(n), 2), ")")
+  ) %>%
   select(-n)
 
 ca_fav <- rbind(ca_fav, ca_fav_everycase)
 
-left_join(ca,ca_fav) %>%
-  pivot_wider(id_cols = case, names_from = counterArguments, values_from = c(all, fav))
+# for caFreq table (below)
+caFreq <- left_join(ca, ca_fav) %>%
+  pivot_wider(id_cols = case, names_from = counterArguments, values_from = c(all, fav)) %>%
+  rename("No" = all_FALSE, "No " = fav_FALSE, "Yes" = all_TRUE, "Yes " = fav_TRUE)
 ```
 
-```{r}
-d_contentAnalysis %>% 
-  filter(citesReplication == T, counterArguments == T) %>% 
-  summarise(evidence = sum(as.logical(evidenceCounter), na.rm=T), methods = sum(as.logical(methodsCounter), na.rm=T), expertise = sum(as.logical(expertiseCounter), na.rm=T))
+```{r }
+# for counter-argument categories table (below)
+counterArgCategories <- d_contentAnalysis %>%
+  filter(citesReplication == T, counterArguments == T) %>%
+  summarise(evidence = sum(as.logical(evidenceCounter), na.rm = T), methods = sum(as.logical(methodsCounter), na.rm = T), expertise = sum(as.logical(expertiseCounter), na.rm = T))
 ```
 
-```{r}
-# meta-data for names does not appear to be standard. so extract surnames of original authors, automatically match, manually check
+Table \@ref(tab:caFreq) shows whether articles that cited the original study and replication study (“co-citing articles”), and the subset of co-citing articles that cited the original study favourably, provided any explicit counter-arguments to defend the credibility of the original finding (an explicit defence) or not (an absent defence). Overall, fewer than half of the `r d_contentAnalysis %>% filter(citesReplication==T) %>% nrow()` co-citing articles provided any counter-arguments. Of the `r d_contentAnalysis %>% filter(citesReplication==T,citationClassificationAgreed=='favourable') %>% nrow()` co-citing articles that cited the original study favourably, around half provided counter-arguments. We identified `r counterArgCategories %>% mutate(totalCA = sum(evidence,methods,expertise)) %>% pull(totalCA)` discrete counter-arguments in `r d_contentAnalysis %>% filter(citesReplication==T,counterArguments==T) %>% nrow()` citing articles (`r d_contentAnalysis %>% filter(citesReplication==T,counterArguments==T) %>% distinct(doi) %>% nrow()` of which were unique articles, as `r d_contentAnalysis %>% filter(citesReplication==T,counterArguments==T) %>% count(doi) %>% filter(n>1) %>% nrow()` of them were cited in two of the case studies) and allocated them to one of three categories (Table \@ref(tab:caCategories)).
 
-d_args <- d_contentAnalysis %>% 
+```{r caFreq}
+caFreq %>%
+  kable("latex", booktabs = T, caption = "Counts and percentages (in brackets) for whether articles that cited both the original study and replication study provided any explicit argumentation to defend the original study. Data are displayed for co-citing articles with any citation valence classification and the subset of co-citing articles with favourable citation valence classifications.") %>%
+  add_header_above(c(" " = 1, "All citation valences" = 2, "Favourable citation valences" = 2))
+```
+
+```{r caCategories}
+counterArgCategories %>%
+  apa_table(caption = "Categorisation of counter-arguments provided to defend the original study in light of the contradictory replication result. 57 discrete counter-arguments were identified in 50 articles (45 unique articles across cases).")
+```
+
+
+```{r}
+# exploratory analyses of articles containing counter-arguments
+
+# get all articles containing counter arguments
+d_args <- d_contentAnalysis %>%
   filter(counterArguments == T)
-```
-```{r}
+
 # which journals are counter-argument articles published in?
-ca_journals <- left_join(d_args, d_citations, by = 'UT') %>% 
+ca_journals <- left_join(d_args, d_citations, by = "UT") %>%
   distinct(doi, .keep_all = T) %>% # unique articles only
   count(SO) %>%
   arrange(desc(n)) %>%
-  rename('journal' = SO)
+  rename("journal" = SO)
 ```
+
 ```{r}
-# look at article types for counter-argument articles
-ca_artTypes <- d_args %>% 
+# get article types for counter-argument articles
+ca_artTypes <- d_args %>%
   distinct(doi, .keep_all = T) %>% # unique articles only
-  count(articleType) 
+  count(articleType)
 
-ca_noData <- ca_artTypes %>% filter(articleType %in% c('No empirical data')) %>% pull(n)
-ca_novData <- ca_artTypes %>% filter(articleType %in% c('Empirical data - field study', 'Empirical data - laboratory study','Empirical data - multiple study types are reported','Empirical data - survey')) %>% pull(n) %>% sum()
-ca_existData <- ca_artTypes %>% filter(articleType %in% c('Data synthesis - meta-analysis','Empirical data - commentary including analysis')) %>% pull(n) %>% sum()
+# extract information for in text reporting
+ca_noData <- ca_artTypes %>%
+  filter(articleType %in% c("No empirical data")) %>%
+  pull(n)
+ca_novData <- ca_artTypes %>%
+  filter(articleType %in% c("Empirical data - field study", "Empirical data - laboratory study", "Empirical data - multiple study types are reported", "Empirical data - survey")) %>%
+  pull(n) %>%
+  sum()
+ca_existData <- ca_artTypes %>%
+  filter(articleType %in% c("Data synthesis - meta-analysis", "Empirical data - commentary including analysis")) %>%
+  pull(n) %>%
+  sum()
 ```
-```{r} 
-# get original author surnames for all cases
-org_auths_df <- data.frame(case = caseNames, authNames = c('Baumeister, Bratslavsky, Muraven, Tice', # Baumeister, RF; Bratslavsky, E; Muraven, M; Tice, DM,
-           "Sripada, Kessler, Jonides", # Sripada, C; Kessler, D; Jonides, J,  
-           "Strack, Martin, Stepper", # STRACK, F; MARTIN, LL; STEPPER, S,
-           "Carter, Ferguson, Hassin", # Carter, TJ; Ferguson, MJ; Hassin, RR,
-           "Caruso, Vohs, Baxter, Waytz")) # Caruso, EM; Vohs, KD; Baxter, B; Waytz, A)
 
-org_auths_list <- str_c(org_auths_df$authNames, collapse = ', ') %>%
-  str_replace_all(',','') %>%
-  str_split(' ') %>%
+```{r} 
+# now look at authorship overlap - a problem here is identifying unique individuals due to non-standard meta-data for author names. To address this we will convert full names to surnames then manually verify any automatically identified matches.
+
+# get original author surnames for all cases
+org_auths_df <- data.frame(case = caseNames, authNames = c(
+  "Baumeister, Bratslavsky, Muraven, Tice", # Baumeister, RF; Bratslavsky, E; Muraven, M; Tice, DM,
+  "Sripada, Kessler, Jonides", # Sripada, C; Kessler, D; Jonides, J,
+  "Strack, Martin, Stepper", # STRACK, F; MARTIN, LL; STEPPER, S,
+  "Carter, Ferguson, Hassin", # Carter, TJ; Ferguson, MJ; Hassin, RR,
+  "Caruso, Vohs, Baxter, Waytz"
+)) # Caruso, EM; Vohs, KD; Baxter, B; Waytz, A)
+
+# convert to a list of original author surnames
+org_auths_list <- str_c(org_auths_df$authNames, collapse = ", ") %>%
+  str_replace_all(",", "") %>%
+  str_split(" ") %>%
   unlist()
 
 # author surnames for counter-argument papers
-ca_auth_list <- d_args %>% 
-  distinct(doi, .keep_all = T) %>% 
-  pull(authors) %>% 
-  str_c(collapse = '; ') 
+ca_auth_list <- d_args %>%
+  distinct(doi, .keep_all = T) %>%
+  pull(authors) %>%
+  str_c(collapse = '; ')
 
 # frequency of authors in counter-arg papers
 ca_auth_freq <- ca_auth_list %>%
@@ -297,29 +499,44 @@ ca_auth_freq <- ca_auth_list %>%
   table(dnn = 'name') %>%
   as.data.frame() %>%
   arrange(desc(Freq)) %>%
-  rowwise() %>% 
+  rowwise() %>%
   mutate(surname = str_split(name,',')[[1]][1]) # extract surnames
 
 # frequency of original authors also authoring counter-arg papers
 ca_auth_surnames <- ca_auth_freq$surname %>% str_c(collapse = ' ')
 org_auths_ca <- org_auths_list[str_detect(ca_auth_surnames, org_auths_list)]
 
+# now extract surnames of co-authors of original first authors
 d_coauthors <- d_coauthors %>%
   rowwise() %>%
-  mutate(surnames = str_split(Authors,'; ')[[1]] %>% str_extract("[^,]+") %>% str_c(sep = '', collapse = ';'))
+  mutate(surnames = str_split(Authors, "; ")[[1]] %>% str_extract("[^,]+") %>% str_c(sep = "", collapse = ";"))
 
-co_auths_list <- d_coauthors$surnames %>% str_to_lower() %>% str_c(';', collapse='') %>% str_split(';') %>% as.data.frame(col.names = 'coauthors') %>% filter(coauthors != 'baumeister') %>% distinct(coauthors) %>% count(coauthors) %>% filter(coauthors != '') %>% pull(coauthors)
+# and convert to a list
+co_auths_list <- d_coauthors$surnames %>%
+  str_to_lower() %>%
+  str_c(";", collapse = "") %>%
+  str_split(";") %>%
+  as.data.frame(col.names = "coauthors") %>%
+  filter(coauthors != "baumeister") %>%
+  distinct(coauthors) %>%
+  count(coauthors) %>%
+  filter(coauthors != "") %>%
+  pull(coauthors)
+
+# now we will do some string matching to identify overlap of authorship between counter-argument article (CAA) authors and (1) original authors and (2) collaborators of original first authors.
 
 d_args <- d_args %>%
-  distinct(doi, .keep_all = T) %>% 
+  distinct(doi, .keep_all = T) %>%
   rowwise() %>%
-  mutate(surnames = str_split(authors,'; ')[[1]] %>% str_extract("[^,]+") %>% str_c(sep = '', collapse = ' '),
-         org_auth_detected = ifelse(any(str_detect(str_to_lower(surnames),str_to_lower(paste0("\\b",org_auths_list, "\\b")))),T,F),
-         coauth_detected = ifelse(any(str_detect(str_to_lower(surnames),str_to_lower(paste0("\\b",co_auths_list,"\\b")))),T,F))
-  
+  mutate(
+    surnames = str_split(authors, "; ")[[1]] %>% str_extract("[^,]+") %>% str_c(sep = "", collapse = " "), # extract CAA author surnames
+    org_auth_detected = ifelse(any(str_detect(str_to_lower(surnames), str_to_lower(paste0("\\b", org_auths_list, "\\b")))), T, F), # check if each CAA author surname is amongst original author surnames
+    coauth_detected = ifelse(any(str_detect(str_to_lower(surnames), str_to_lower(paste0("\\b", co_auths_list, "\\b")))), T, F)
+  ) # check if each CAA author surname is amongst original first author collaborator surnames
+
 
 # after automated matching, we did a manual check to verify
-# because the automated matching was based on surnames, sometimes the wrong individual is flagged as a match. Manual checking highlights these cases. And below we override the match classification in these cases by replacing it with zero. Note that the automated matching also cannot distinguish between detecting 1 or more than one match in a given string. So below there are examples of a manual override e.g., changing to 2 when there are 2 relevant individuals in the author list.
+# because the automated matching was based on surnames, sometimes the wrong individual is flagged as a match. Manual checking highlights these cases. If necessary, we override the match classification of the automated matching.
 
 d_args <- d_args %>%
   mutate(coauth_detected = case_when(
@@ -344,20 +561,24 @@ d_args <- d_args %>%
     T ~ F # everything else is false
   ))
 
-d_args %>% filter(coauth_detected == T) %>% count(articleType)
-d_args %>% filter(org_auth_detected == T) %>% count(articleType)
+# extract information for in text reporting
+co_auths_overlap <- d_args %>%
+  count(coauth_detected) %>%
+  filter(coauth_detected == T) %>%
+  pull(n)
 
-co_auths_overlap <- d_args %>% count(coauth_detected) %>% filter(coauth_detected == T) %>% pull(n)
-org_auths_overlap <- d_args %>% count(org_auth_detected) %>% filter(org_auth_detected == T) %>% pull(n)
+org_auths_overlap <- d_args %>%
+  count(org_auth_detected) %>%
+  filter(org_auth_detected == T) %>%
+  pull(n)
+
+overlapArtTypes <- d_args %>%
+  filter(coauth_detected == T | org_auth_detected == T) %>%
+  count(articleType)
 ```
 
-In additional exploratory analyses (not pre-registered) we examined other characteristics of the 45 unique articles that contained counter-arguments. The articles were published in `r nrow(ca_journals)` individual journals, with *Frontiers in Psychology* publishing `r ca_journals %>% filter(journal == 'FRONTIERS IN PSYCHOLOGY') %>% pull(n)` of the articles, *Social Psychology* publishing `r ca_journals %>% filter(journal == 'SOCIAL PSYCHOLOGY') %>% pull(n)` of the articles and all other journals publishing only 1 or 2 of the articles. `r ca_noData` of the articles did not involve empirical data, `r ca_existData` involved reanalysis or meta-analysis of existing data, and `r ca_novData` involved collection of novel data. The articles had `r nrow(ca_auth_freq)` individual authors. `r org_auths_overlap` articles were (co)authored of one of the original authors and `r co_auths_overlap` articles were (co)authored by a collaborator of one of the first authors of the original articles. `r ca_auth_freq %>% filter(Freq > 1) %>% nrow()` other individuals appeared as an author on 2 of the articles (no individual appeared as an author on more than 2 articles).
+In additional exploratory analyses (not pre-registered) we examined other characteristics of the ` d_contentAnalysis %>% filter(citesReplication==T,counterArguments==T) %>% distinct(doi) %>% nrow()` unique articles that contained counter-arguments. The articles were published in `r nrow(ca_journals)` individual journals, with *Frontiers in Psychology* publishing `r ca_journals %>% filter(journal == 'FRONTIERS IN PSYCHOLOGY') %>% pull(n)` of the articles, *Social Psychology* publishing `r ca_journals %>% filter(journal == 'SOCIAL PSYCHOLOGY') %>% pull(n)` of the articles, and all other journals publishing only 1 or 2 of the articles. `r ca_noData` of the articles did not involve empirical data, `r ca_existData` involved reanalysis or meta-analysis of existing data, and `r ca_novData` involved collection of novel data. The articles had `r nrow(ca_auth_freq)` individual authors of whom all contributed to a single article except for `r ca_auth_freq %>% filter(Freq > 1) %>% nrow()` individuals who had (co)authored 2 articles. `r org_auths_overlap` articles were (co)authored by one of the original authors and `r co_auths_overlap` articles were (co)authored by at least one prior collaborator of one of the first authors of the original articles. `r overlapArtTypes %>% filter(articleType == "No empirical data") %>% pull(n)` of these articles did not involve empirical data and `r overlapArtTypes %>% filter(articleType != "No empirical data") %>% pull(n) %>% sum()` of them involved novel data collection.
 
-
-```{r}
-# how many articles citing the original study also cited the replication?
-d_contentAnalysis %>% filter(excluded == F) %>% count(citesReplication, citationClassificationAgreed, counterArguments)
-```
 
 # Discussion
 
@@ -387,4 +608,4 @@ render_appendix("appendix.Rmd")
 # References
 
 \setlength{\parindent}{-0.5in}
-\setlength{\leftskip}{0.5in}
+\setlength{\leftskip}{0.5in

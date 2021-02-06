@@ -1,14 +1,11 @@
 # Appendix A: Protocol Changes {#appA}
 
 
-
-
-
 # Appendix B title {#appB}
 
 Tabular data for citation curves and citation valence
 
-```{r results = "asis"}
+```{r tabularData, results = "asis"}
 options(knitr.kable.NA = "-") # set symbol to use for NA cells
 
 d_summary %>%
