@@ -42,7 +42,7 @@ affiliation:
 author_note: >
  
 abstract: >
-   Abstract here. 
+   Replication studies that contradict published findings may facilitate scientific self-correction by triggering a reappraisal of the original findings; however, the research community's response to replication studies has not been studied systematically. One approach for gauging responses to replication results is to examine how they impact citations to original studies. In this study, we explored post-replication citation patterns in the context of four prominent multi-laboratory replication attempts published in the field of psychology that strongly contradicted and outweighed prior findings. Generally, we observed a small post-replication decline in the number of favourable citations and a small increase in unfavourable citations. This indicates only modest corrective effects and implies considerable perpetuation of belief in the original findings. Replication results that strongly contradict an original finding do not necessarily nullify its credibility; however, one might at least expect the replication results to be acknowledged and explicitly debated in subsequent literature. By contrast, we found substantial citation bias: the majority of articles citing the original studies neglected to cite the relevant replication. Of those articles that did cite the replication, but continued to cite the original study favourably, approximately half offered an explicit defence of the original study. Our findings suggest that even replication results that strongly contradict original findings do not necessarily prompt a corrective response from the research community. 
   
 keywords          : "Replication, self-correction, citations, citation bias, meta-research"
 
