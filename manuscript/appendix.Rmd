@@ -1,9 +1,24 @@
-# Appendix A: Protocol Changes {#appA}
+# Protocol amendments {#appA}
 
+The study protocol (rationale, methods, and analysis plan) was pre-registered on April 7th 2018 (https://osf.io/eh5qd/). In order to extend the sampling frame and make other minor methodological adjustments, an amended protocol was registered part way through data collection on May 1st 2019 (https://osf.io/pdvb5/). Appendix Table \@ref(tab:protocolAmendments) outlines amendments between the pre-registered protocol, amended protocol, and final report.
 
-# Appendix B title {#appB}
+```{r protocolAmendments}
+tibble(
+  "Issue" = c("Sampling frame", "Definition of pre-replication assessment period", "Exclusion of replication year from qualitative assessment", "Automated extraction of citation contexts and replication co-citation", "Counter-arguments", "Dual-coding for citation valence classification", "Examination of characteristics of articles providing counter-arguments.","Renaming of two citation patterns"),
+  "Amendment" = c("The end date of the sampling frame was initially April 6th 2018 (see pre-registered protocol). Later, we decided to extend the sampling frame to April 26th 2019 to learn more about how the citation curves developed over time (see amended protocol). Finally, we decided to extend the sampling frame to December 31st 2019 to ensure we had all citations for the year 2019.", "Initially, the pre-replication assessment period was defined as 2015 (i.e., replication year - 1) for the RRR cases and all pre-replication years for the other cases. In practice, when the replication year - 1 definition is used for all cases, only one study (Caruso) has a citing article outside of this period, and it is only a single article. Therefore, we have decided that it is more straightforward to use the same definition of the pre-replication assessment period (replication year - 1) for all cases.", "The pre-registered protocol neglected to mention that we intended to exclude the replication year from qualitative assessment. This change was documented in the amended protocol.", "Initially, we intended to use Matlab code to partly automate the extraction of ‘citation contexts’ (text surrounding in-text citations) and identify replication co-citation. However, we found that the size of the relevant citation context varied substantially between articles, so we decided to extract all citation contexts manually. We also decided to identify replication co-citation manually too. These changes were documented in the amended protocol.","In the amended protocol, we clarified that we would attempt to identify counter-arguments in all articles that cited the original study and the replication study.", "Initially, we planned to dual code small batches of articles depending on the degree of inter-rater reliability. However, after encountering a number of somewhat ambiguous cases in our initial coding, we decided to dual-code all articles in order to reduce subjectivity and increase consistency between coders. This is documented in the amended protocol.", "After completing the study we thought it would be informative to examine the article types and journals of articles that provided counter-arguments, and any overlap in authorship with the original study authors or prior collaborators of the first authors of the original studies. These analyses were not pre-registered.", "After completing the study we decided to revise the following terminology from the protocol in order to improve clarity: “principled defence” was changed to “explicit defence” and “hollow defence” was changed to “absent defence”.")
+) %>%
+  kable(booktabs=T,longtable=T,caption = "Protocol amendments.") %>%
+  column_spec(1,width='4cm') %>%
+  column_spec(2,width='11cm')
+```
 
-Tabular data for citation curves and citation valence
+# Random sampling and extrapolation procedures for Baumeister case study {#appB}
+
+Due to a large number of citations, qualitative assessment in the Baumeister case was based on a random sample of 40% of citing articles in each of the pre-replication and post-replication time periods. We used the ‘sample’ function in the programming language R to draw random samples. Because the sampling frame was extended on three occasions (see Supplementary Information A), it was necessary to obtain random samples three times in order to maintain coverage of 40% for each time period. As we aimed to achieve a 40% sample across each time period, an equal sample in each individual year was not guaranteed, and in fact the proportion of citations coded in the post-refutation period does differ between years (48% 49%, and 23% respectively).
+
+We extrapolated the valence classifications and co-citation of replications from the random sample to all citing articles in the pre-replication (2015) and post-replication (2017, 2018, 2019) assessment periods. To do this, we multiplied each category count in a given year by the reciprocal of the proportion coded in that year. For example, in 2017, we classified 71 citations as ‘favorable’ amongst the 48% of citations coded in that year, so to extrapolate we computed 71*1/0.48 = 148.
+
+# Tabular data for citation curves, citation valence, and co-citation of replications {#appC}
 
 ```{r tabularData, results = "asis"}
 options(knitr.kable.NA = "-") # set symbol to use for NA cells
@@ -23,7 +38,7 @@ d_summary %>%
          citesRep = ifelse(case %in% c('baumeister','sripada','strack') & pubYear == 2015, NA, citesRep), # set citesRep to NA in pre-replication year
          citesRep = ifelse(case %in% c('carter','caruso') & pubYear == 2013, NA, citesRep)) %>% # set citesRep to NA in pre-replication year
   select(year = pubYear, `citing\narticles` = citesTarget, excluded, unclassifiable, favourable, equivocal, unfavourable, citesRep) %>%
-  kable(caption = 'Counts (percentages) for citations to the original study, exclusions, citation valence, and concomitant citations to replication study in the time periods subjected to qualitative analysis. Percentages for the Baumeister case are extrapolations based on 40\\% random samples drawn from the pre-replication and post-replication time periods.', booktabs=T, longtable=T) %>%
+  kable(caption = 'Raw counts and percentages for citations to the original study, exclusions, citation valence, and concomitant citations to the replication study in qualitative assessment period. In the Baumeister case, numbers in square brackets in the citations column are the number of citing articles included in the random samples drawn from the pre-replication and post-replication time periods. Percentages for the Baumeister case are extrapolations based on the random samples.', booktabs=T, longtable=T) %>%
   pack_rows("Baumeister", 1, 4) %>%
   pack_rows("Sripada", 5, 8) %>%
   pack_rows("Strack", 9, 12) %>%
@@ -32,8 +47,8 @@ d_summary %>%
 ```
 
 ```{r}
-# DATA SUMMARISED FOR POST-REPLICATION PERIOD
-d_summary %>%
+# data summarised for post-replication period
+d_summary_postrep <- d_summary %>%
   filter(year == 'post-replication') %>%
   mutate(favourable = paste0(favourable,' (',round(favourable_prop,2),')'),
          unfavourable = paste0(unfavourable,' (',round(unfavourable_prop,2),')'),
@@ -43,8 +58,6 @@ d_summary %>%
          citesRep = paste0(citesRep_yes,' (',round(citesRep_yes_prop,2),')')) %>%
   select(case, year = pubYear, `citing\narticles` = citesTarget, excluded, unclassifiable, favourable, equivocal, unfavourable, citesRep)
 ```
-
-
 
 
 
