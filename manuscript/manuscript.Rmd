@@ -66,7 +66,6 @@ output            :
 library(knitr) # for literate programming
 library(papaja) # for article template
 library(tidyverse) # for data munging
-library(tidylog) # inline tidyverse feedback
 library(here) # for finding files
 library(ggpubr) # for arranging plots
 library(kableExtra) # for table formatting
