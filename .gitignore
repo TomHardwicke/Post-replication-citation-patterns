@@ -55,3 +55,6 @@ analysis/preliminaryAnalysis_PRCP_20July2020.docx
 analysis/~$eliminaryAnalysis.docx
 analysis/rawToPrimary.R
 analysis/preliminaryAnalysis.Rmd
+manuscript/manuscript.tex
+manuscript/manuscript.pdf
+manuscript/manuscript.log
