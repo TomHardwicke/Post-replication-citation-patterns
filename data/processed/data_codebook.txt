@@ -73,7 +73,7 @@ year / pubYear = year to which 'totalCitations' refers
 totalCitations = total citations to the original article identified in 'case' in the year identified in 'year'
 case = identity of the original article (Baumeister, Strack, Sripada, Caruso, Carter)
 
-# Dataset 3: d_contentAnlysis
+# Dataset 3: d_contentAnalysis
 
 Description: This dataset contains information created during the qualitative analyses, including citation valence, whether articles citing the original study also cited the replication, presence of counter arguments, and categorization of counter arguments. The dataset has one row per article.
 
