@@ -117,33 +117,35 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
       replicationYear = # replication year
       ifelse(pubYear == replicationYear, TRUE, FALSE)
     )
-  
-  # add a row summarise the entire post-replication period
-  
-  # define post-replication period
-  postRepPeriod <- as.character(seq(replicationYear+1,2019,1))
 
-  d <- rbind(d, d %>% 
+  # add a row summarise the entire post-replication period
+
+  # define post-replication period
+  postRepPeriod <- as.character(seq(replicationYear + 1, 2019, 1))
+
+  d <- rbind(d, d %>%
     filter(year %in% postRepPeriod) %>%
-    summarise(case = thisCase, 
-              pubYear = 'post-replication', 
-              citesTarget = sum(citesTarget), 
-              citesTarget_std =sum(citesTarget_std), 
-              year = 'post-replication', 
-              citesRef = sum(citesRef),
-              citesRef_std = sum(citesRef_std), 
-              equivocal = sum(equivocal), 
-              favourable = sum(favourable), 
-              unclassifiable = sum(unclassifiable),
-              unfavourable = sum(unfavourable),
-              citesRep_no = sum(citesRep_no), 
-              citesRep_yes = sum(citesRep_yes), 
-              excluded_no = sum(excluded_no),
-              excluded_yes = sum(excluded_yes),
-              counterargs_no = sum(counterargs_no),
-              counterargs_yes =sum(counterargs_yes), 
-              standardizationYear = FALSE, 
-              replicationYear = FALSE))
+    summarise(
+      case = thisCase,
+      pubYear = "post-replication",
+      citesTarget = sum(citesTarget),
+      citesTarget_std = sum(citesTarget_std),
+      year = "post-replication",
+      citesRef = sum(citesRef),
+      citesRef_std = sum(citesRef_std),
+      equivocal = sum(equivocal),
+      favourable = sum(favourable),
+      unclassifiable = sum(unclassifiable),
+      unfavourable = sum(unfavourable),
+      citesRep_no = sum(citesRep_no),
+      citesRep_yes = sum(citesRep_yes),
+      excluded_no = sum(excluded_no),
+      excluded_yes = sum(excluded_yes),
+      counterargs_no = sum(counterargs_no),
+      counterargs_yes = sum(counterargs_yes),
+      standardizationYear = FALSE,
+      replicationYear = FALSE
+    ))
 
   # compute extrapolations for the Baumeister case
   ## because there were so many citations for the Baumeister case, we only classified a random sample of 40% of relevant citations across each of  the pre-refutation period and post-refutation period
@@ -167,7 +169,7 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
         pubYear == "post-replication" ~ favourable * (1 / contentProp[5]),
       ),
       NA # for other cases nothing is needed
-    )) %>% 
+    )) %>%
     mutate(unfavourable_extra = ifelse(
       case == "baumeister", case_when( # for baumeister case
         pubYear == "2015" ~ unfavourable * (1 / contentProp[1]),
@@ -177,7 +179,7 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
         pubYear == "post-replication" ~ unfavourable * (1 / contentProp[5]),
       ),
       NA # for other cases nothing is needed
-    )) %>% 
+    )) %>%
     mutate(equivocal_extra = ifelse(
       case == "baumeister", case_when( # for baumeister case
         pubYear == "2015" ~ equivocal * (1 / contentProp[1]),
@@ -187,7 +189,7 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
         pubYear == "post-replication" ~ equivocal * (1 / contentProp[5]),
       ),
       NA # for other cases nothing is needed
-    )) %>% 
+    )) %>%
     mutate(unclassifiable_extra = ifelse(
       case == "baumeister", case_when( # for baumeister case
         pubYear == "2015" ~ unclassifiable * (1 / contentProp[1]),
@@ -241,23 +243,23 @@ standardizeCitations <- function(citationData, referenceData, contentData, repli
 
   # now compute proportions and standardize the citesRep and citationClassification information
   ## for the baumeister case, use the extrapolated numbers
-  
+
   d <- d %>%
     mutate(
-      favourable_prop = ifelse(case=='baumeister', favourable_extra / citesTarget, favourable / citesTarget),
+      favourable_prop = ifelse(case == "baumeister", favourable_extra / citesTarget, favourable / citesTarget),
       favourable_std = favourable_prop * citesTarget_std,
-      unfavourable_prop = ifelse(case=='baumeister', unfavourable_extra / citesTarget, unfavourable / citesTarget),
+      unfavourable_prop = ifelse(case == "baumeister", unfavourable_extra / citesTarget, unfavourable / citesTarget),
       unfavourable_std = unfavourable_prop * citesTarget_std,
-      unclassifiable_prop = ifelse(case=='baumeister', unclassifiable_extra / citesTarget, unclassifiable / citesTarget),
+      unclassifiable_prop = ifelse(case == "baumeister", unclassifiable_extra / citesTarget, unclassifiable / citesTarget),
       unclassifiable_std = unclassifiable_prop * citesTarget_std,
-      equivocal_prop = ifelse(case=='baumeister', equivocal_extra / citesTarget, equivocal / citesTarget),
+      equivocal_prop = ifelse(case == "baumeister", equivocal_extra / citesTarget, equivocal / citesTarget),
       equivocal_std = equivocal_prop * citesTarget_std,
-      citesRep_no_prop = ifelse(case=='baumeister', citesRep_no_extra / citesTarget, citesRep_no / citesTarget),
-      citesRep_yes_prop = ifelse(case=='baumeister', citesRep_yes_extra / citesTarget, citesRep_yes / citesTarget),
+      citesRep_no_prop = ifelse(case == "baumeister", citesRep_no_extra / citesTarget, citesRep_no / citesTarget),
+      citesRep_yes_prop = ifelse(case == "baumeister", citesRep_yes_extra / citesTarget, citesRep_yes / citesTarget),
       citesRep_no_std = citesRep_no_prop * citesTarget_std,
       citesRep_yes_std = citesRep_yes_prop * citesTarget_std,
-      excluded_no_prop = ifelse(case=='baumeister', excluded_no_extra / citesTarget, excluded_no / citesTarget),
-      excluded_yes_prop = ifelse(case=='baumeister', excluded_yes_extra / citesTarget, excluded_yes / citesTarget),
+      excluded_no_prop = ifelse(case == "baumeister", excluded_no_extra / citesTarget, excluded_no / citesTarget),
+      excluded_yes_prop = ifelse(case == "baumeister", excluded_yes_extra / citesTarget, excluded_yes / citesTarget),
       excluded_no_std = excluded_no_prop * citesTarget_std,
       excluded_yes_std = excluded_yes_prop * citesTarget_std
     )
@@ -274,9 +276,9 @@ citationCurve <- function(
                           plotReference = T, # plot the reference class (T) or not (F)
                           standardized = T # use standarized citations (T) or not (F)
 ) {
-  d <- d_summary %>% 
+  d <- d_summary %>%
     filter(case == thisCase) %>% # extract the data for this case
-    filter(year != 'post-replication') %>% # remove the summary row for the post-replication period
+    filter(year != "post-replication") %>% # remove the summary row for the post-replication period
     mutate(pubYear = as.numeric(pubYear)) # reset pubyear to numeric
 
   replicationYear <- d %>% # identify the replication year for this case
@@ -488,7 +490,7 @@ citationCurve <- function(
   if (areaPlot == "citesReplication") {
     basePlot <- basePlot +
       geom_area(
-        alpha =.4,
+        alpha = .4,
         aes(fill = var),
         data = d %>%
           filter(
@@ -503,7 +505,7 @@ citationCurve <- function(
           mutate(var = fct_drop(var))
       ) +
       scale_colour_manual(name = "", values = p2, guide = F)
-    
+
     # include legend for top row plots only
     if (thisCase %in% c("baumeister", "strack")) { # if standardizing then all cases can use same y axis
       basePlot <- basePlot +
