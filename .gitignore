@@ -4,6 +4,7 @@ protocol/
 figs/
 data/OLD/
 data/raw/
+journalSubmission/
 
 # History files
 .Rhistory
