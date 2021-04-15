@@ -102,15 +102,19 @@ for (i in caseNames) { # loop through case names
   d_coauthors <- bind_rows(d_coauthors, d) # append to dataframe
 }
 
+### Save file
+write_csv(d_coauthors, path = here("data", "processed", "/d_coauthors.csv"))
+save(d_coauthors, file = here("data", "processed", "/d_coauthors.rds"))
+
 ## Replication study citation data [analyses requested by a reviewer]
 
 ### Load files
 d_repCitations <- data.frame() # create empty list to hold data frames for each case
-for (i in c('hagger','wagenmakers','klein')) { # loop through case names
+for (i in c('klein','hagger','wagenmakers')) { # loop through case names
   filePath <- here("data", "primary", paste0(i, "Citations.csv")) # create file path
   d <- read_csv(filePath, col_types = cols(.default = "c")) # load the data
   d <- d %>% mutate(case = i)
-  d_repCitations <- bind_rows(d_citations, d) # append to dataframe
+  d_repCitations <- bind_rows(d_repCitations, d) # append to dataframe
 }
 
 ### Apply munging
@@ -119,12 +123,8 @@ d_repCitations <- d_repCitations %>%
   filter(pubYear < 2020) # remove any citations after 2019
 
 ### Save file
-write_csv(d_citations, path = here("data", "processed", "/d_citations.csv"))
-save(d_citations, file = here("data", "processed", "/d_citations.rds"))
+write_csv(d_repCitations, file = here("data", "processed", "/d_repCitations.csv"))
+save(d_repCitations, file = here("data", "processed", "/d_repCitations.rds"))
 
 
-### Apply munging
 
-### Save file
-write_csv(d_coauthors, path = here("data", "processed", "/d_coauthors.csv"))
-save(d_coauthors, file = here("data", "processed", "/d_coauthors.rds"))
