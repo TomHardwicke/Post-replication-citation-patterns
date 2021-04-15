@@ -181,3 +181,16 @@ Hot Paper Status
 Date of Export = date this information was exported
 ...68 = empty/unknown
 case = identity of the original article (Baumeister, Strack, Sripada, Caruso, Carter)
+
+# Dataset 5: d_repCitations
+
+Description: This dataset contains bibliographic records for all articles that cite each of the three replication studies (Hagger, Wagenmakers, Klein) from the publication date of each study through to 31st December, 2019. The dataset has one row per article.
+
+Source: The records were downloaded from Clarivate Analytics Web of Science Core Collection accessed via the University of Amsterdam on 15th April, 2021. The following steps were followed:
+
+1. Go to Web of Science (https://wok.mimas.ac.uk/) and log in
+2. Search the Web of Science Core Collection for the target article.
+3. On the right hand side next to the article record it should say "Times Cited". Click on the number which should be a hyperlink. This should now display records for all of the citing articles.
+4. To export the records, use the "Export to" button and choose "Fast 5K"
+
+For column definitions, see dataset 1 above.

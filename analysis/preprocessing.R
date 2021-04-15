@@ -102,6 +102,27 @@ for (i in caseNames) { # loop through case names
   d_coauthors <- bind_rows(d_coauthors, d) # append to dataframe
 }
 
+## Replication study citation data [analyses requested by a reviewer]
+
+### Load files
+d_repCitations <- data.frame() # create empty list to hold data frames for each case
+for (i in c('hagger','wagenmakers','klein')) { # loop through case names
+  filePath <- here("data", "primary", paste0(i, "Citations.csv")) # create file path
+  d <- read_csv(filePath, col_types = cols(.default = "c")) # load the data
+  d <- d %>% mutate(case = i)
+  d_repCitations <- bind_rows(d_citations, d) # append to dataframe
+}
+
+### Apply munging
+d_repCitations <- d_repCitations %>%
+  mutate(pubYear = as.numeric(PY)) %>%
+  filter(pubYear < 2020) # remove any citations after 2019
+
+### Save file
+write_csv(d_citations, path = here("data", "processed", "/d_citations.csv"))
+save(d_citations, file = here("data", "processed", "/d_citations.rds"))
+
+
 ### Apply munging
 
 ### Save file
