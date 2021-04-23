@@ -56,7 +56,7 @@ pubYear = Year Published (same as PY)
 
 # Dataset 2: d_reference
 
-Description: This dataset contains annual citations for all of the five original articles (Baumeister, Strack, Sripada, Caruso, Carter) from the publication year through to 2019. The dataset has one row per article.
+Description: This dataset contains annual citations to the reference class (all articles published in the same journal and same year as the target article) for all of the five target articles (Baumeister, Strack, Sripada, Caruso, Carter) from the publication year through to 2019. The dataset has one row per article.
 
 Source: This information was downloaded from Clarivate Analytics Web of Science Core Collection accessed via the Charité – Universitätsmedizin Berlin on 12th August, 2020.
 
@@ -70,7 +70,7 @@ The following steps were followed:
 Columns:
 
 year / pubYear = year to which 'totalCitations' refers
-totalCitations = total citations to the original article identified in 'case' in the year identified in 'year'
+totalCitations = total reference class citations for the target article identified in 'case' in the year identified in 'year'
 case = identity of the original article (Baumeister, Strack, Sripada, Caruso, Carter)
 
 # Dataset 3: d_contentAnalysis
