@@ -1,2 +1,5 @@
-Data and analyses for the project "Post-replication citation patterns in psychology"
+This repository contains data and analyses for the project "Citation patterns following a strongly contradictory replication result: Four case studies from psychology". The most straightforward way of re-running the analyses is to visit the Code Ocean container here: https://doi.org/10.24433/CO.4225975.v2 After logging in, you can recreate the manuscript from the data and code by clicking a single button “Reproducible Run”.
+
+If you wish to run the analysis on your own computer, please download all files in the manuscript, analysis, and data folders. The only script you need to run directly is manuscript.Rmd - this is an R Markdown file which can be ‘knit’ into a pdf document. The preprocessing.Rmd script and functions.Rmd script are auxiliary scripts called by manuscript.Rmd and are not intended to be run directly. The preprocessing script converts the data files in the ‘primary’ folder into the data files in the ‘processed’ folder. The functions.Rmd script contains code to standardize citation counts and plot citation curves.
+
  
