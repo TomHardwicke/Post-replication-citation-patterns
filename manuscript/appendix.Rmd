@@ -18,7 +18,7 @@ Due to a large number of citations, qualitative assessment in the Baumeister cas
 
 We extrapolated the valence classifications and co-citation of replications from the random sample to all citing articles in the pre-replication (2015) and post-replication (2017, 2018, 2019) assessment periods. To do this, we multiplied each category count in a given year by the reciprocal of the proportion coded in that year. For example, in 2017, we classified 71 citations as ‘favorable’ amongst the 48% of citations coded in that year, so to extrapolate we computed 71*1/0.48 = 148.
 
-# Tabular data for citation curves, citation valence, and co-citation of replications {#appC}
+# Non-standardized data for citation curves, citation valence, and co-citation of replications {#appC}
 
 ```{r tabularData, results = "asis"}
 options(knitr.kable.NA = "-") # set symbol to use for NA cells
@@ -59,5 +59,23 @@ d_summary_postrep <- d_summary %>%
   select(case, year = pubYear, `citing\narticles` = citesTarget, excluded, unclassifiable, favourable, equivocal, unfavourable, citesRep)
 ```
 
+```{r citeCurvesRaw, fig.cap='Annual citation counts (non-standardized; solid line) for the five original studies. The black arrow indicates the year in which the replication was published.', fig.width=12, fig.height=12.5, fig.path='figs/', dev=c('png', 'pdf')}
+ggarrange(
+  ggarrange(citationCurve("strack", thisTitle = "Strack et al. (1988)", standardized = F, plotReference = F, areaPlot = F),
+    citationCurve("baumeister", thisTitle = "Baumeister et al. (1998)", standardized = F, plotReference = F, areaPlot = F),
+    nrow = 2, ncol = 1, common.legend = T
+  ),
+  ggarrange(citationCurve("sripada", thisTitle = "Sripada et al. (2014)", standardized = F, plotReference = F, areaPlot = F),
+    citationCurve("carter", thisTitle = "Carter et al. (2011)", standardized = F, plotReference = F, areaPlot = F),
+    citationCurve("caruso", thisTitle = "Caruso et al. (2013)", standardized = F, plotReference = F, areaPlot = F),
+    nrow = 1, ncol = 3, common.legend = F
+  ),
+  nrow = 2, ncol = 1, heights = c(2, 1)
+) %>%
+  annotate_figure(
+    left = text_grob("Citation count (non-standardized)", rot = 90, size = 20),
+    bottom = text_grob("Publication year", size = 20)
+  )
+```
 
 
