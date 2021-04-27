@@ -286,7 +286,7 @@ citationCurve <- function(
     pull(pubYear)
 
   # set the top of the y-axis and increments depending on case (some have many citations, some have few)
-  if (standardized == T) { # if standardizing then all cases can use same y axis (except for Caruso when we standardize to the replication year...)
+  if (standardized == T) { # if standardizing then all cases can use same y axis (except for Carter and Caruso)
     if (thisCase == "caruso") {
       yMax <- 300
       yInc <- 50
@@ -297,12 +297,12 @@ citationCurve <- function(
       yMax <- 125
       yInc <- 25
     }
-  } else if (thisCase == "baumeister") {
+  } else if (thisCase == "baumeister") { # if not standardizing then need to set axes for each case individually
     yMax <- 250
     yInc <- 50
   } else if (thisCase == "strack") {
-    yMax <- 70
-    yInc <- 10
+    yMax <- 75
+    yInc <- 25
   } else {
     yMax <- 20
     yInc <- 5
@@ -339,6 +339,7 @@ citationCurve <- function(
       excluded_yes_std,
       citesTarget,
       citesTarget_std,
+      citesRef,
       citesRef_std,
       citesRep_yes_std,
       citesRep_no_std,
@@ -352,6 +353,7 @@ citationCurve <- function(
         excluded_yes_std,
         citesTarget,
         citesTarget_std,
+        citesRef,
         citesRef_std,
         citesRep_yes_std,
         citesRep_no_std,
@@ -367,6 +369,7 @@ citationCurve <- function(
         "Excluded" = "excluded_yes_std",
         "Target study (raw)" = "citesTarget",
         "Target study" = "citesTarget_std",
+        "Reference studies (raw)" = "citesRef",
         "Reference studies" = "citesRef_std",
         "Cites replication" = "citesRep_yes_std",
         "Does not cite replication" = "citesRep_no_std",
@@ -380,6 +383,7 @@ citationCurve <- function(
         "Excluded",
         "Target study (raw)",
         "Target study",
+        "Reference studies (raw)",
         "Reference studies",
         "Cites replication",
         "Does not cite replication",
@@ -428,17 +432,31 @@ citationCurve <- function(
   ## end accounting for absence of qual data in rep year
 
   if (plotReference == T) { # if user wants to plot the reference class
-    basePlot <- basePlot +
-      geom_line(
-        data = d %>% # plot reference class citations
-          filter(
-            var == "Reference studies",
-            dummyYears == F
-          ),
-        colour = "grey",
-        linetype = "dashed",
-        size = .5
-      )
+    if (standardized == T) { # if standardizing
+      basePlot <- basePlot +
+        geom_line(
+          data = d %>% # plot reference class citations
+            filter(
+              var == "Reference studies",
+              dummyYears == F
+            ),
+          colour = "grey",
+          linetype = "dashed",
+          size = .5
+        )
+    } else{
+      basePlot <- basePlot +
+        geom_line(
+          data = d %>% # plot reference class citations
+            filter(
+              var == "Reference studies (raw)",
+              dummyYears == F
+            ),
+          colour = "grey",
+          linetype = "dashed",
+          size = .5
+        )
+    }
   }
 
   if (areaPlot == "classification") {
@@ -539,13 +557,13 @@ citationCurve <- function(
   }
 
   basePlot <- basePlot +
-    scale_y_continuous(breaks = seq(0, yMax, yInc), expand = c(0, 0)) + # adjust y axis
+    scale_y_continuous(breaks = seq(0, yMax, yInc), expand = c(0, 0), limits = c(0,yMax)) + # adjust y axis
     annotate( # plot arrow marking replication year
       "segment",
       x = replicationYear,
       y = yMax,
       xend = replicationYear,
-      yend = 3,
+      yend = yMax/20,
       size = 1,
       arrow = arrow(length = unit(.5, "cm"), type = "closed")
     ) +
