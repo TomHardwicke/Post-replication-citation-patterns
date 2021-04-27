@@ -125,6 +125,3 @@ d_repCitations <- d_repCitations %>%
 ### Save file
 write_csv(d_repCitations, file = here("data", "processed", "/d_repCitations.csv"))
 save(d_repCitations, file = here("data", "processed", "/d_repCitations.rds"))
-
-
-
