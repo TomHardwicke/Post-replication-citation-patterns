@@ -1,5 +1,8 @@
 # Preprocessing
 
+# specify custom notin function
+`%notin%` = function(x,y) !(x %in% y)
+
 # identify the five different case studies we are looking at
 caseNames <- c("baumeister", "sripada", "strack", "carter", "caruso")
 
@@ -55,6 +58,21 @@ for (i in caseNames) { # loop through case names
 #### also load the articles that became accessible or were translated during round 2 revisions
 d_round2access <- read_csv(here("data", "primary", "contentAnalysis_round2access.csv"), col_types = cols(.default = "c")) # load the data
 
+#### save a version of the round 2 access data for reporting how many we could or could not access
+d_round2access_meta <- d_round2access %>% select(wos_id, access, source, emailContacted, emailBounced, emailResponseReceived, translationNeeded, translationNote)
+write_csv(d_round2access_meta, file = here("data", "processed", "/d_round2access.csv"))
+save(d_round2access_meta, file = here("data", "processed", "/d_round2access.rds"))
+
+#### integrate the newly accessible/translated article content analysis data with the previous data
+#### firstly align columns in the newly accessible articles df with the content analysis df
+d_round2access <- d_round2access %>% select(firstCoder, secondCoder, doi, authors,	pubYear,	excluded,	exclusionReason,	articleType,	citesReplication,	citationClassificationOriginal = citationClassificationFirstCoder, citationClassificationAgreed, counterArguments,	evidenceCounter,	evidenceVerbatim,	methodsCounter,	methodsVerbatim,	expertiseCounter,	expertiseVerbatim, UT =	wos_id,	case)
+
+#### remove the cases excluded for access or translation reasons from the content analysis dataframe and replace with those from the newly accessible articles dataframe
+
+d_contentAnalysis <- d_contentAnalysis %>% mutate(replace = ifelse(exclusionReason %in% c("No access", "Non-English language"), T, F)) # tag articles to replace
+d_contentAnalysis <- d_contentAnalysis %>% filter(replace == F) %>% select(-replace) # remove articles to be replaced
+d_contentAnalysis <- rbind(d_contentAnalysis,d_round2access) # combine newly accessible/translated articles with content analysis data
+
 ### Apply munging
 d_contentAnalysis <- d_contentAnalysis %>%
   mutate_at(vars( # change the columns below
@@ -82,12 +100,12 @@ d_contentAnalysis <- d_contentAnalysis %>%
 # homogenize article type labels
 d_contentAnalysis <- d_contentAnalysis %>%
   mutate(articleType = recode(articleType,
-    "Data synthesis - Meta-analysis" = "Data synthesis - meta-analysis",
-    "Empirical data -laboratory study" = "Empirical data - laboratory study",
-    "Empirical data -field study" = "Empirical data - field study",
-    "Review" = "No empirical data",
-    "Data synthesis - Systematic Review" = "No empirical data",
-    "Data synthesis" = "Data synthesis - meta-analysis"
+                              "Data synthesis - Meta-analysis" = "Data synthesis - meta-analysis",
+                              "Empirical data -laboratory study" = "Empirical data - laboratory study",
+                              "Empirical data -field study" = "Empirical data - field study",
+                              "Review" = "No empirical data",
+                              "Data synthesis - Systematic Review" = "No empirical data",
+                              "Data synthesis" = "Data synthesis - meta-analysis"
   ))
 
 ### Save file
