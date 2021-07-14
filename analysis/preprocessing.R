@@ -19,7 +19,7 @@ d_citations <- d_citations %>%
   mutate(pubYear = as.numeric(PY))
 
 ### Save file
-write_csv(d_citations, path = here("data", "processed", "/d_citations.csv"))
+write_csv(d_citations, file = here("data", "processed", "/d_citations.csv"))
 save(d_citations, file = here("data", "processed", "/d_citations.rds"))
 
 ## Reference data
@@ -38,7 +38,7 @@ d_reference <- d_reference %>%
   mutate(pubYear = as.numeric(year))
 
 ### Save file
-write_csv(d_reference, path = here("data", "processed", "/d_reference.csv"))
+write_csv(d_reference, file = here("data", "processed", "/d_reference.csv"))
 save(d_reference, file = here("data", "processed", "/d_reference.rds"))
 
 ## Content analysis data
@@ -51,6 +51,9 @@ for (i in caseNames) { # loop through case names
   d <- d %>% mutate(case = i)
   d_contentAnalysis <- bind_rows(d_contentAnalysis, d) # append to dataframe
 }
+
+#### also load the articles that became accessible or were translated during round 2 revisions
+d_round2access <- read_csv(here("data", "primary", "contentAnalysis_round2access.csv"), col_types = cols(.default = "c")) # load the data
 
 ### Apply munging
 d_contentAnalysis <- d_contentAnalysis %>%
@@ -88,7 +91,7 @@ d_contentAnalysis <- d_contentAnalysis %>%
   ))
 
 ### Save file
-write_csv(d_contentAnalysis, path = here("data", "processed", "/d_contentAnalysis.csv"))
+write_csv(d_contentAnalysis, file = here("data", "processed", "/d_contentAnalysis.csv"))
 save(d_contentAnalysis, file = here("data", "processed", "/d_contentAnalysis.rds"))
 
 ## Coauthor data
@@ -103,7 +106,7 @@ for (i in caseNames) { # loop through case names
 }
 
 ### Save file
-write_csv(d_coauthors, path = here("data", "processed", "/d_coauthors.csv"))
+write_csv(d_coauthors, file = here("data", "processed", "/d_coauthors.csv"))
 save(d_coauthors, file = here("data", "processed", "/d_coauthors.rds"))
 
 ## Replication study citation data [analyses requested by a reviewer]
