@@ -57,7 +57,9 @@ lang              : "en-US"
 class             : "man"
 
 output            : 
-  papaja::apa6_word
+  papaja::apa6_pdf:
+    includes:
+        after_body: "appendix.tex"
 ---
 
 ```{r load_packages, warning=F}
@@ -785,5 +787,6 @@ Zwaan, R. A., Etz, A., Lucas, R. E., & Donnellan, M. B. (2018). Making replicati
 
 \newpage
 
-```{r child = "appendix.Rmd"}
+```{r render_appendix, include=FALSE}
+render_appendix("appendix.Rmd")
 ```
